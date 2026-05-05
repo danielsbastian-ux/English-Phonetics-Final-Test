@@ -85,6 +85,45 @@
         .correction-table th { background: #0c4a6e; color: white; padding: 0.5rem; }
         .correction-table td { padding: 0.5rem; border-bottom: 1px solid #e2e8f0; }
         .correct-ans { background: #dcfce7; } .wrong-ans { background: #fee2e2; }
+@media print {
+    /* Hide everything except the results page */
+    body {
+        background: white;
+        padding: 0;
+    }
+    .container, .section, .btn, #mainContainer, #studentPage, #testContent,
+    .symbol-palette, .modal, .timer, .university-header, .instructions,
+    #printBtn, form, #submitBtn, #confirmModal {
+        display: none !important;
+    }
+    .results-page {
+        display: block !important;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        margin: 0;
+        padding: 1rem;
+        background: white;
+        border: none;
+        box-shadow: none;
+    }
+    .correction-table {
+        width: 100%;
+        font-size: 12px;
+    }
+    .correction-table th, .correction-table td {
+        padding: 4px 6px;
+        border: 1px solid #999;
+    }
+    .score-highlight {
+        font-size: 2rem;
+    }
+    /* Ensure the print button itself is hidden */
+    #printBtn {
+        display: none !important;
+    }
+}
     </style>
 </head>
 <body>
@@ -262,6 +301,10 @@
     <h2>🎓 Test Completed</h2>
     <p>Your score: <span class="score-highlight" id="finalScoreSpan"></span> / 100</p>
     <div id="corrections"></div>
+<div style="text-align:center; margin-top:2rem;">
+    <button class="btn" onclick="window.print()" id="printBtn">🖨️ Download PDF</button>
+    <p style="font-size:0.9rem; margin-top:0.5rem; color:#64748b;">Click the button, then choose “Save as PDF” in the print dialog.</p>
+</div>
 </div>
 
 <script>
