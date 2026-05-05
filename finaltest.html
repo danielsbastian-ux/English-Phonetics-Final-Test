@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>English Phonetics Final Test</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(145deg, #e0f2fe 0%, #f0f9ff 100%);
+            color: #1e293b; line-height: 1.6; padding: 2rem 1rem;
+            display: flex; flex-direction: column; align-items: center; min-height: 100vh;
+        }
+        .container {
+            max-width: 1050px; width: 100%;
+            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(16px);
+            border-radius: 2rem; box-shadow: 0 25px 50px -12px rgba(0, 100, 150, 0.15);
+            padding: 2.5rem 3rem; margin: 1rem 0;
+        }
+        .university-header { text-align: center; border-bottom: 2px solid #bae6fd; padding-bottom: 1.8rem; margin-bottom: 2rem; }
+        .university-header .test-title {
+            font-size: 2.5rem; font-weight: 700;
+            background: linear-gradient(135deg, #0c4a6e, #0369a1);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .university-header .uni-name { font-size: 1.4rem; color: #0c4a6e; }
+        .btn {
+            background: #0c4a6e; color: white; border: none;
+            padding: 0.9rem 2.5rem; font-size: 1.1rem; border-radius: 3rem;
+            cursor: pointer; font-weight: 600; box-shadow: 0 8px 16px rgba(12, 74, 110, 0.3);
+            transition: 0.3s; display: inline-flex; align-items: center; gap: 0.4rem;
+        }
+        .btn:hover { background: #075985; transform: translateY(-3px); }
+        .timer {
+            background: #0f172a; color: #7dd3fc; padding: 0.5rem 2rem;
+            border-radius: 3rem; font-size: 1.6rem; font-weight: 700; margin: 1.5rem 0;
+            display: inline-block;
+        }
+        .section {
+            margin: 2rem 0; background: white; border-radius: 1.5rem; padding: 1.8rem 2rem;
+            box-shadow: 0 5px 18px rgba(0,0,0,0.03); border: 1px solid #e0f2fe;
+        }
+        .section h2 { color: #0c4a6e; border-bottom: 2px dashed #bae6fd; padding-bottom: 0.4rem; margin-bottom: 1.2rem; }
+        .question { margin: 1.2rem 0 1.2rem 1rem; }
+        .question p { font-weight: 600; margin-bottom: 0.5rem; }
+        .options { display: flex; flex-wrap: wrap; gap: 0.6rem 1.2rem; align-items: center; }
+        .options label {
+            display: flex; align-items: center; gap: 0.3rem;
+            background: #f8fafc; padding: 0.35rem 0.9rem; border-radius: 0.6rem;
+            border: 1px solid #e2e8f0; cursor: pointer; transition: 0.15s;
+        }
+        .options label:hover { background: #e0f2fe; border-color: #0284c7; }
+        .fill-blank input, .transcribe-input input {
+            width: 100%; max-width: 500px; padding: 0.5rem;
+            font-family: 'Courier New', monospace; border: 1px solid #cbd5e1; border-radius: 0.5rem;
+        }
+        .matching-reference {
+            background: #f0f9ff; border: 1px solid #bae6fd; padding: 1rem;
+            border-radius: 0.8rem; display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 0.5rem;
+        }
+        .matching-row { display: flex; align-items: center; gap: 1rem; margin: 0.4rem 0; }
+        .stress-row { display: flex; align-items: center; gap: 1rem; margin: 0.5rem 0; }
+        .checkbox-group label { margin-right: 1.5rem; }
+        .tf-options { display: flex; gap: 1.5rem; margin-top: 0.3rem; }
+        .symbol-palette {
+            position: fixed; bottom: 20px; right: 20px;
+            background: white; border: 2px solid #0284c7; border-radius: 1.2rem;
+            padding: 0.5rem; display: flex; flex-wrap: wrap; gap: 0.3rem; z-index: 999;
+        }
+        .symbol-palette button {
+            background: #f0f9ff; border: 1px solid #7dd3fc; border-radius: 0.5rem;
+            font-family: 'Courier New', monospace; padding: 0.3rem 0.5rem; cursor: pointer;
+        }
+        .modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); align-items: center; justify-content: center; z-index: 1000;
+        }
+        .modal-content { background: white; padding: 2rem; border-radius: 1.5rem; text-align: center; }
+        .results-page { display: none; margin-top: 2rem; }
+        .score-highlight { font-size: 3rem; font-weight: 700; color: #0c4a6e; }
+        .correction-table { width: 100%; border-collapse: collapse; margin-top: 1.5rem; }
+        .correction-table th { background: #0c4a6e; color: white; padding: 0.5rem; }
+        .correction-table td { padding: 0.5rem; border-bottom: 1px solid #e2e8f0; }
+        .correct-ans { background: #dcfce7; } .wrong-ans { background: #fee2e2; }
+    </style>
+</head>
+<body>
+<div class="container" id="mainContainer">
+    <div class="university-header">
+        <div class="test-title">English Phonetics Final Test</div>
+        <div class="uni-name">Jakarta International University</div>
+        <div class="subtitle">📖 Spelling, Pronunciation & Connected Speech · GB English</div>
+    </div>
+
+    <!-- Student info page -->
+    <div id="studentPage">
+        <div style="display:flex; gap:2rem; flex-wrap:wrap; align-items:center; background:#f0f9ff; padding:1.5rem; border-radius:1rem; margin:2rem 0;">
+            <div>
+                <label style="font-weight:600;">👤 Student Name</label>
+                <input type="text" id="studentName" placeholder="Full name" style="padding:0.6rem; border-radius:0.5rem; border:1px solid #cbd5e1; width:240px;">
+            </div>
+            <div>
+                <label style="font-weight:600;">🎓 Student ID</label>
+                <input type="text" id="studentID" placeholder="e.g. 20231234" style="padding:0.6rem; border-radius:0.5rem; border:1px solid #cbd5e1; width:240px;">
+            </div>
+        </div>
+        <div style="background:#fef9c3; border-left:6px solid #eab308; padding:1rem 1.5rem; border-radius:0.8rem; margin:1.5rem 0 2rem;">
+            <h3 style="color:#0c4a6e;">⏳ Test Instructions</h3>
+            <ul style="list-style:none; padding-left:0;">
+                <li>🕒 This test lasts <strong>2 hours</strong>. Timer starts with <em>Start Test</em>.</li>
+                <li>📝 Answer all questions – you'll be reminded if any are left empty.</li>
+                <li>🏆 Your final score (out of 100) appears after submission.</li>
+                <li>🚫 Do not refresh or close the page during the test.</li>
+                <li>🔒 <strong>Do not switch tabs or windows.</strong> Switching away will be recorded and may lead to automatic submission.</li>
+                <li>⌨️ Use the <strong>phonemic symbol palette</strong> (bottom right) for transcriptions.</li>
+            </ul>
+        </div>
+        <button class="btn" id="startBtn">🚀 Start Test</button>
+    </div>
+
+    <!-- Test content (hidden initially) -->
+    <div id="testContent" style="display:none;">
+        <div class="timer" id="timerDisplay">02:00:00</div>
+        <form id="testForm">
+            <!-- SECTION 1: Multiple Choice (20 questions) -->
+            <div class="section" id="secMC"><h2>📌 Section 1 · Multiple Choice (20 points)</h2>
+                <!-- 1-10 -->
+                <div class="question"><p>1. The letter <b>c</b> in <i>cease</i> is pronounced as</p><div class="options"><label><input type="radio" name="mc1" value="a"> a) /k/</label><label><input type="radio" name="mc1" value="b"> b) /s/</label><label><input type="radio" name="mc1" value="c"> c) /ʃ/</label><label><input type="radio" name="mc1" value="d"> d) /tʃ/</label></div></div>
+                <div class="question"><p>2. The <b>ch</b> in <i>chef</i> sounds like</p><div class="options"><label><input type="radio" name="mc2" value="a"> a) /tʃ/</label><label><input type="radio" name="mc2" value="b"> b) /k/</label><label><input type="radio" name="mc2" value="c"> c) /ʃ/</label><label><input type="radio" name="mc2" value="d"> d) /dʒ/</label></div></div>
+                <div class="question"><p>3. Which word contains a <b>silent b</b>?</p><div class="options"><label><input type="radio" name="mc3" value="a"> a) timber</label><label><input type="radio" name="mc3" value="b"> b) bomb</label><label><input type="radio" name="mc3" value="c"> c) limbo</label><label><input type="radio" name="mc3" value="d"> d) lumber</label></div></div>
+                <div class="question"><p>4. In <i>know</i>, which letter is silent?</p><div class="options"><label><input type="radio" name="mc4" value="a"> a) k</label><label><input type="radio" name="mc4" value="b"> b) n</label><label><input type="radio" name="mc4" value="c"> c) o</label><label><input type="radio" name="mc4" value="d"> d) w</label></div></div>
+                <div class="question"><p>5. <i>sign</i> + <b>-al</b> → <i>signal</i>; the <i>g</i> becomes</p><div class="options"><label><input type="radio" name="mc5" value="a"> a) still silent</label><label><input type="radio" name="mc5" value="b"> b) pronounced /ɡ/</label><label><input type="radio" name="mc5" value="c"> c) /dʒ/</label><label><input type="radio" name="mc5" value="d"> d) /ʒ/</label></div></div>
+                <div class="question"><p>6. The /l/ in <b>play</b> is a</p><div class="options"><label><input type="radio" name="mc6" value="a"> a) clear [l]</label><label><input type="radio" name="mc6" value="b"> b) dark [ɫ]</label><label><input type="radio" name="mc6" value="c"> c) voiceless [l̥]</label><label><input type="radio" name="mc6" value="d"> d) syllabic [l̩]</label></div></div>
+                <div class="question"><p>7. Example of <b>assimilation</b> in connected speech</p><div class="options"><label><input type="radio" name="mc7" value="a"> a) <i>going to</i> → <i>gonna</i></label><label><input type="radio" name="mc7" value="b"> b) <i>footpath</i> → /ˈfʊppɑːθ/</label><label><input type="radio" name="mc7" value="c"> c) <i>sooner or later</i> → /ˈsuːnər ə ˈleɪtə/</label><label><input type="radio" name="mc7" value="d"> d) <i>cupboard</i> → /ˈkʌbəd/</label></div></div>
+                <div class="question"><p>8. In <b>good morning</b> /ɡʊd ˈmɔːnɪŋ/, /d/ can become</p><div class="options"><label><input type="radio" name="mc8" value="a"> a) /ɡ/</label><label><input type="radio" name="mc8" value="b"> b) /b/</label><label><input type="radio" name="mc8" value="c"> c) /n/</label><label><input type="radio" name="mc8" value="d"> d) /m/</label></div></div>
+                <div class="question"><p>9. Compound <b>apple pie</b> – main stress on</p><div class="options"><label><input type="radio" name="mc9" value="a"> a) first element</label><label><input type="radio" name="mc9" value="b"> b) second element</label><label><input type="radio" name="mc9" value="c"> c) both equally</label><label><input type="radio" name="mc9" value="d"> d) neither</label></div></div>
+                <div class="question"><p>10. "I have a book" – <b>have</b> is normally</p><div class="options"><label><input type="radio" name="mc10" value="a"> a) stressed</label><label><input type="radio" name="mc10" value="b"> b) unstressed/reduced</label><label><input type="radio" name="mc10" value="c"> c) a content word</label><label><input type="radio" name="mc10" value="d"> d) full vowel only</label></div></div>
+                <!-- 11-20 -->
+                <div class="question"><p>11. Why is the <b>k</b> silent in <i>knee</i>?</p><div class="options"><label><input type="radio" name="mc11" value="a"> a) It was never pronounced in English</label><label><input type="radio" name="mc11" value="b"> b) It was once pronounced in Old English but later disappeared</label><label><input type="radio" name="mc11" value="c"> c) It was added by French scribes</label><label><input type="radio" name="mc11" value="d"> d) It represents a vowel</label></div></div>
+                <div class="question"><p>12. Which word contains <b>ch</b> pronounced as /k/?</p><div class="options"><label><input type="radio" name="mc12" value="a"> a) church</label><label><input type="radio" name="mc12" value="b"> b) chef</label><label><input type="radio" name="mc12" value="c"> c) stomach</label><label><input type="radio" name="mc12" value="d"> d) champagne</label></div></div>
+                <div class="question"><p>13. The two main allophones of English /l/ are</p><div class="options"><label><input type="radio" name="mc13" value="a"> a) clear [l] before vowels, dark [ɫ] elsewhere</label><label><input type="radio" name="mc13" value="b"> b) dark [ɫ] before vowels, clear [l] before consonants</label><label><input type="radio" name="mc13" value="c"> c) voiced [l] and voiceless [l̥]</label><label><input type="radio" name="mc13" value="d"> d) syllabic [l̩] and non‑syllabic [l]</label></div></div>
+                <div class="question"><p>14. The sonority scale helps explain</p><div class="options"><label><input type="radio" name="mc14" value="a"> a) why stops are louder than vowels</label><label><input type="radio" name="mc14" value="b"> b) why vowels are the most typical syllable nuclei and sonorant consonants can become syllabic</label><label><input type="radio" name="mc14" value="c"> c) how stress is assigned in English</label><label><input type="radio" name="mc14" value="d"> d) why diphthongs are longer than monophthongs</label></div></div>
+                <div class="question"><p>15. In casual speech, <i>have to</i> (meaning "must") often becomes</p><div class="options"><label><input type="radio" name="mc15" value="a"> a) /ˈhæv tuː/</label><label><input type="radio" name="mc15" value="b"> b) /ˈhæftə/</label><label><input type="radio" name="mc15" value="c"> c) /ˈhæv tə/</label><label><input type="radio" name="mc15" value="d"> d) /ˈhɑːftə/</label></div></div>
+                <div class="question"><p>16. The casual connected‑speech form of <i>want to</i> can be</p><div class="options"><label><input type="radio" name="mc16" value="a"> a) /ˈwɒntɪd/</label><label><input type="radio" name="mc16" value="b"> b) /ˈwɒntə/ or /ˈwɒnə/</label><label><input type="radio" name="mc16" value="c"> c) /ˈwænt tuː/</label><label><input type="radio" name="mc16" value="d"> d) /ˈwɔːntəd/</label></div></div>
+                <div class="question"><p>17. For two‑syllable words that can be both nouns and verbs (e.g. <i>record</i>), the general stress pattern is</p><div class="options"><label><input type="radio" name="mc17" value="a"> a) both stress the first syllable</label><label><input type="radio" name="mc17" value="b"> b) both stress the second syllable</label><label><input type="radio" name="mc17" value="c"> c) nouns stress the first syllable, verbs stress the second</label><label><input type="radio" name="mc17" value="d"> d) stress is random</label></div></div>
+                <div class="question"><p>18. In English sentence stress, which word class is <b>typically unstressed</b>?</p><div class="options"><label><input type="radio" name="mc18" value="a"> a) nouns</label><label><input type="radio" name="mc18" value="b"> b) main verbs</label><label><input type="radio" name="mc18" value="c"> c) adjectives</label><label><input type="radio" name="mc18" value="d"> d) function words (pronouns, prepositions, articles)</label></div></div>
+                <div class="question"><p>19. What is the difference between linking /r/ and intrusive /r/?</p><div class="options"><label><input type="radio" name="mc19" value="a"> a) Linking /r/ occurs only in American English, intrusive /r/ only in British English</label><label><input type="radio" name="mc19" value="b"> b) Linking /r/ appears where the spelling has an <b>r</b>, intrusive /r/ appears where there is no <b>r</b> in the spelling</label><label><input type="radio" name="mc19" value="c"> c) They are the same phenomenon</label><label><input type="radio" name="mc19" value="d"> d) Linking /r/ is inserted after consonants, intrusive /r/ after vowels</label></div></div>
+                <div class="question"><p>20. Why is the <b>n</b> silent in <i>autumn</i>?</p><div class="options"><label><input type="radio" name="mc20" value="a"> a) It was never pronounced in Latin</label><label><input type="radio" name="mc20" value="b"> b) It is part of the final <i>-mn</i> pattern; the /n/ was historically lost</label><label><input type="radio" name="mc20" value="c"> c) The <b>n</b> is always silent before <b>m</b></label><label><input type="radio" name="mc20" value="d"> d) It represents a French spelling only</label></div></div>
+            </div>
+
+            <!-- SECTION 2: Fill in the Blanks -->
+            <div class="section fill-section"><h2>✍️ Section 2 · Fill in the Blanks (10 points)</h2>
+                <div class="question"><p>1. <b>c</b> before e, i, y is usually pronounced as ________</p><div class="fill-blank"><input type="text" name="fb1"></div></div>
+                <div class="question"><p>2. <b>g</b> in <i>gesture</i> is a ________ g (soft/hard)</p><div class="fill-blank"><input type="text" name="fb2"></div></div>
+                <div class="question"><p>3. In <i>thumb</i>, the letter ________ is silent.</p><div class="fill-blank"><input type="text" name="fb3"></div></div>
+                <div class="question"><p>4. TRAP vowel /æ/ is almost always written with letter ________</p><div class="fill-blank"><input type="text" name="fb4"></div></div>
+                <div class="question"><p>5. FOOT vowel /ʊ/ word with 'oo' (example) ________</p><div class="fill-blank"><input type="text" name="fb5"></div></div>
+                <div class="question"><p>6. Concrete realisations of a phoneme are called ________</p><div class="fill-blank"><input type="text" name="fb6"></div></div>
+                <div class="question"><p>7. Obligatory vowel element in a syllable: ________</p><div class="fill-blank"><input type="text" name="fb7"></div></div>
+                <div class="question"><p>8. Deletion of a sound in connected speech: ________</p><div class="fill-blank"><input type="text" name="fb8"></div></div>
+                <div class="question"><p>9. /r/ inserted without an r in spelling: ________ r</p><div class="fill-blank"><input type="text" name="fb9"></div></div>
+                <div class="question"><p>10. Nouns, main verbs, adjectives, adverbs are ________ words</p><div class="fill-blank"><input type="text" name="fb10"></div></div>
+            </div>
+
+            <!-- SECTION 3: Matching -->
+            <div class="section"><h2>🔗 Section 3 · Matching (10 points)</h2>
+                <div class="matching-reference">
+                    <div><strong>A.</strong> <i>bottle</i> /ˈbɒtl̩/ – /l/ acts as the nucleus</div>
+                    <div><strong>B.</strong> <i>sooner or later</i> → /ˈsuːnər ə ˈleɪtə/</div>
+                    <div><strong>C.</strong> Clear [l] and dark [ɫ] occur in different phonetic environments</div>
+                    <div><strong>D.</strong> <i>knee</i> – Old English /k/ disappeared, spelling remained</div>
+                    <div><strong>E.</strong> <i>cease</i> contains the sound /s/</div>
+                    <div><strong>F.</strong> /m/ and /n/ before /f/ are both realised as [ɱ]</div>
+                    <div><strong>G.</strong> <i>apple tree</i> – stress falls on <i>apple</i></div>
+                    <div><strong>H.</strong> English speech where stressed syllables are roughly equally spaced in time</div>
+                    <div><strong>I.</strong> <i>bath</i> (noun) – the <b>th</b> is /θ/</div>
+                    <div><strong>J.</strong> In <i>Britain</i>, /t/ can be [t] or [ʔ] without changing meaning</div>
+                </div>
+                <div class="matching-row"><span>1. Soft <b>c</b></span> <select name="match1"><option value="">--</option><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option><option>F</option><option>G</option><option>H</option><option>I</option><option>J</option></select></div>
+                <div class="matching-row"><span>2. Voiceless <b>TH</b></span> <select name="match2"><option value="">--</option><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option><option>F</option><option>G</option><option>H</option><option>I</option><option>J</option></select></div>
+                <div class="matching-row"><span>3. Complementary distribution</span> <select name="match3"><option value="">--</option><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option><option>F</option><option>G</option><option>H</option><option>I</option><option>J</option></select></div>
+                <div class="matching-row"><span>4. Free variation</span> <select name="match4"><option value="">--</option><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option><option>F</option><option>G</option><option>H</option><option>I</option><option>J</option></select></div>
+                <div class="matching-row"><span>5. Neutralisation</span> <select name="match5"><option value="">--</option><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option><option>F</option><option>G</option><option>H</option><option>I</option><option>J</option></select></div>
+                <div class="matching-row"><span>6. Linking /r/</span> <select name="match6"><option value="">--</option><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option><option>F</option><option>G</option><option>H</option><option>I</option><option>J</option></select></div>
+                <div class="matching-row"><span>7. Historical elision</span> <select name="match7"><option value="">--</option><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option><option>F</option><option>G</option><option>H</option><option>I</option><option>J</option></select></div>
+                <div class="matching-row"><span>8. Initial Element Stress (IES)</span> <select name="match8"><option value="">--</option><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option><option>F</option><option>G</option><option>H</option><option>I</option><option>J</option></select></div>
+                <div class="matching-row"><span>9. Stress‑timed rhythm</span> <select name="match9"><option value="">--</option><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option><option>F</option><option>G</option><option>H</option><option>I</option><option>J</option></select></div>
+                <div class="matching-row"><span>10. Syllabic consonant</span> <select name="match10"><option value="">--</option><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option><option>F</option><option>G</option><option>H</option><option>I</option><option>J</option></select></div>
+            </div>
+
+            <!-- SECTION 4: Practical -->
+            <div class="section" id="practicalSection"><h2>🧪 Section 4 · Practical Application (10 points)</h2>
+                <p><b>A. Phonemic Transcription (2 pts)</b> – transcribe <i>castle</i> in GB English.</p>
+                <div class="transcribe-input"><input type="text" name="transcribe"></div>
+
+                <p style="margin-top:1rem;"><b>B. Word Stress (3 pts)</b> – <strong>choose</strong> the stressed syllable.</p>
+                <div class="stress-row"><span>1. computer</span> <label><input type="radio" name="stress1" value="com"> com</label><label><input type="radio" name="stress1" value="pu"> pu</label><label><input type="radio" name="stress1" value="ter"> ter</label></div>
+                <div class="stress-row"><span>2. photograph</span> <label><input type="radio" name="stress2" value="pho"> pho</label><label><input type="radio" name="stress2" value="to"> to</label><label><input type="radio" name="stress2" value="graph"> graph</label></div>
+                <div class="stress-row"><span>3. Japan</span> <label><input type="radio" name="stress3" value="Ja"> Ja</label><label><input type="radio" name="stress3" value="pan"> pan</label></div>
+
+                <p style="margin-top:1rem;"><b>C. Connected Speech (3 pts)</b> – <i>"He must be tired"</i> in casual speech.</p>
+                <ol style="margin-left:1.5rem;">
+                    <li>Connected speech form: <input type="text" name="connected" style="margin-bottom:0.5rem; width:80%;"></li>
+                    <li>Elision (what is deleted?): <input type="text" name="elisionDesc" style="margin-bottom:0.5rem; width:80%;"></li>
+                    <li>Assimilation or weak form: <input type="text" name="assimDesc" style="width:80%;"></li>
+                </ol>
+
+                <p style="margin-top:1rem;"><b>D. Sentence Stress (2 pts)</b> – <strong>choose</strong> the stressed words: <i>I'm going to the shops to buy some bread.</i></p>
+                <div class="checkbox-group">
+                    <label><input type="checkbox" name="stressWord" value="going"> going</label>
+                    <label><input type="checkbox" name="stressWord" value="shops"> shops</label>
+                    <label><input type="checkbox" name="stressWord" value="buy"> buy</label>
+                    <label><input type="checkbox" name="stressWord" value="bread"> bread</label>
+                    <label><input type="checkbox" name="stressWord" value="I'm"> I'm</label>
+                    <label><input type="checkbox" name="stressWord" value="to"> to</label>
+                    <label><input type="checkbox" name="stressWord" value="the"> the</label>
+                    <label><input type="checkbox" name="stressWord" value="some"> some</label>
+                </div>
+            </div>
+
+            <!-- SECTION 5: True/False -->
+            <div class="section tf-section"><h2>✅ Section 5 · True or False (10 points)</h2>
+                <div class="question"><p>1. <b>c</b> in <i>cat</i> is a soft c.</p><div class="tf-options"><label><input type="radio" name="tf1" value="T"> True</label><label><input type="radio" name="tf1" value="F"> False</label></div></div>
+                <div class="question"><p>2. <b>gh</b> in <i>ghost</i> is silent.</p><div class="tf-options"><label><input type="radio" name="tf2" value="T"> True</label><label><input type="radio" name="tf2" value="F"> False</label></div></div>
+                <div class="question"><p>3. <b>oo</b> in <i>book</i> = FOOT /ʊ/.</p><div class="tf-options"><label><input type="radio" name="tf3" value="T"> True</label><label><input type="radio" name="tf3" value="F"> False</label></div></div>
+                <div class="question"><p>4. Allophones are abstract mental units.</p><div class="tf-options"><label><input type="radio" name="tf4" value="T"> True</label><label><input type="radio" name="tf4" value="F"> False</label></div></div>
+                <div class="question"><p>5. <i>want to</i> → /ˈwɒnə/ in casual speech.</p><div class="tf-options"><label><input type="radio" name="tf5" value="T"> True</label><label><input type="radio" name="tf5" value="F"> False</label></div></div>
+                <div class="question"><p>6. <b>ch</b> in <i>chef</i> = /ʃ/.</p><div class="tf-options"><label><input type="radio" name="tf6" value="T"> True</label><label><input type="radio" name="tf6" value="F"> False</label></div></div>
+                <div class="question"><p>7. Function words normally stressed.</p><div class="tf-options"><label><input type="radio" name="tf7" value="T"> True</label><label><input type="radio" name="tf7" value="F"> False</label></div></div>
+                <div class="question"><p>8. <i>present</i> (noun) stressed on 1st syllable.</p><div class="tf-options"><label><input type="radio" name="tf8" value="T"> True</label><label><input type="radio" name="tf8" value="F"> False</label></div></div>
+                <div class="question"><p>9. A syllable must contain a vowel letter.</p><div class="tf-options"><label><input type="radio" name="tf9" value="T"> True</label><label><input type="radio" name="tf9" value="F"> False</label></div></div>
+                <div class="question"><p>10. TRAP /æ/ almost always spelled <b>a</b>.</p><div class="tf-options"><label><input type="radio" name="tf10" value="T"> True</label><label><input type="radio" name="tf10" value="F"> False</label></div></div>
+            </div>
+        </form>
+        <button class="btn" id="submitBtn">✅ Submit Test</button>
+    </div>
+</div>
+
+<!-- Phonemic palette -->
+<div class="symbol-palette" id="symbolPalette" style="display:none;">
+    <button>ə</button><button>æ</button><button>ɒ</button><button>ɑː</button><button>ɔː</button>
+    <button>ʊ</button><button>uː</button><button>ʌ</button><button>iː</button><button>ɪ</button>
+    <button>e</button><button>θ</button><button>ð</button><button>ʃ</button><button>ʒ</button>
+    <button>ŋ</button><button>j</button><button>w</button><button>ˈ</button><button>ˌ</button>
+    <button>ː</button><button>/</button>
+</div>
+
+<!-- Modal -->
+<div class="modal" id="confirmModal">
+    <div class="modal-content">
+        <p><strong>Are you sure you want to submit?</strong></p>
+        <button class="btn" id="yesBtn">✅ Yes, submit final</button>
+        <button class="btn" id="noBtn" style="background:#64748b;">❌ No, go back</button>
+    </div>
+</div>
+
+<!-- Results -->
+<div class="container results-page" id="resultsPage">
+    <h2>🎓 Test Completed</h2>
+    <p>Your score: <span class="score-highlight" id="finalScoreSpan"></span> / 100</p>
+    <div id="corrections"></div>
+</div>
+
+<script>
+(function() {
+    const GOOGLE_SHEET_URL = 'https://script.google.com/macros/s/AKfycbzLdLsxhyiOwb6H62GP1ac_CnKpJtBMKUWyPE6O_BHK8ujVBQLht3BDmsE2s6bICxNYEg/exec';
+
+    // ---------- DISPLAY ANSWERS FOR FILL IN THE BLANKS ----------
+    const fillBlankDisplay = {
+        1: "/s/, s, the /s/ sound, /s/ (voiceless alveolar fricative), s sound",
+        2: "soft, soft g, a soft g, soft 'g'",
+        3: "b, letter b, the letter b, b (silent)",
+        4: "a, letter a, the letter a, a (grapheme)",
+        5: "book, good, foot, look, cook, took, hook, shook, wool, wood",
+        6: "allophones, allophone, allophonic variants",
+        7: "nucleus, syllable nucleus, the nucleus, peak",
+        8: "elision, deletion, sound deletion, omission, elision (deletion)",
+        9: "intrusive, intrusive r, intrusive /r/",
+        10: "content, content words, lexical, lexical words"
+    };
+
+    // ---------- TOLERANT GRADING FUNCTIONS ----------
+    function normalizeAnswer(str) {
+        return str.trim().toLowerCase().replace(/[\s\/\[\]\(\)]+/g, ' ').trim();
+    }
+
+    function gradeFillBlank(qNum, userAnswer) {
+        const ans = normalizeAnswer(userAnswer);
+        const rules = {
+            1: { full: ['s','/s/','the /s/ sound','/s/ voiceless alveolar fricative','s sound'],
+                 partial: [/^s\s?sound$/, /^s\s?is/, /^c$/] },
+            2: { full: ['soft','soft g','a soft g','soft \'g\''],
+                 partial: [/^sof/, /^sft/] },
+            3: { full: ['b','letter b','the letter b','b silent','b (silent)'],
+                 partial: [/^v$/] },
+            4: { full: ['a','letter a','the letter a','a grapheme'],
+                 partial: [/^a vowel$/] },
+            5: { full: ['book','good','foot','look','cook','took','hook','shook','wool','wood'],
+                 partial: [/food/, /moon/] },
+            6: { full: ['allophones','allophone','allophonic variants'],
+                 partial: [/alophones/, /allofones/, /allaphones/] },
+            7: { full: ['nucleus','syllable nucleus','the nucleus','peak'],
+                 partial: [/nucelus/, /core/] },
+            8: { full: ['elision','deletion','sound deletion','omission','elision (deletion)'],
+                 partial: [/elition/, /elisson/, /elide/] },
+            9: { full: ['intrusive','intrusive r','intrusive /r/'],
+                 partial: [/intrusiv/, /intrusive r/] },
+            10:{ full: ['content','content words','lexical','lexical words'],
+                 partial: [/contant/, /lexical/] }
+        };
+        const rule = rules[qNum];
+        if (!rule) return 0;
+        for (let f of rule.full) {
+            if (normalizeAnswer(f) === ans) return 1;
+        }
+        for (let regex of rule.partial) {
+            if (regex.test(ans)) return 0.5;
+        }
+        return 0;
+    }
+
+    function gradeTranscription(value) {
+    // Remove slashes, brackets, spaces, stress marks, and convert to lower case
+    let raw = value.trim().toLowerCase().replace(/[\/\[\]\sˈˌ]/g, '');
+    // Unify any length marks (both ː and : become one character, then optional)
+    raw = raw.replace(/[ː:]/g, 'ː');   // turn all colons into IPA length mark
+    if (raw.includes('t')) return 0;
+    // Allow: k ɑ (with or without length mark) s ə l   OR   k æ s ə l
+    const vowelOk = /kɑː?səl|kæsəl/.test(raw);
+    return vowelOk ? 2 : 1;
+}
+
+    function gradeConnectedSpeech(value) {
+    let input = value.trim().toLowerCase().replace(/[\/\[\]\sˈˌ]/g, '');
+    input = input.replace(/[ː:]/g, 'ː');   // unify length marks
+    // Does the answer start with "hi" or "i" (reduced he) AND contain "mʌs" (no t)?
+    const hasReducedHe = /^(hi|i)/.test(input);
+    // Check for "mʌs" optionally followed by a bilabial p (assimilation)
+    const hasMustReduced = /mʌs(p)?/.test(input) && !input.includes('t');
+    if (hasReducedHe && hasMustReduced) return 1;
+    if (hasReducedHe || hasMustReduced) return 0.5;
+    return 0;
+}
+
+    function gradeElisionDesc(value) {
+        const ans = value.trim().toLowerCase();
+        if (/t.*must|must.*t.*(deleted|elided|dropped)/i.test(ans) || /\/t\/ elision/.test(ans)) return 1;
+        if (/consonant.*must.*(deleted|dropped)/.test(ans) || /sound deletion.*must/.test(ans)) return 0.5;
+        return 0;
+    }
+
+    function gradeAssimilationDesc(value) {
+        const ans = value.trim().toLowerCase();
+        if (/weak form.*he|he.*weak|h.?dropping|he.*\/i\/|he.*reduced.*\/i\//.test(ans)) return 1;
+        if (/assimilation.*p.*b|place assimilation.*bilabial|mʌsp/.test(ans)) return 1;
+        if (/he.*weak/.test(ans) || /must.*before.*b/.test(ans)) return 0.5;
+        return 0;
+    }
+
+    function gradeSentenceStress() {
+        const checked = Array.from(document.querySelectorAll('input[name="stressWord"]:checked')).map(cb => cb.value);
+        const correctSet = new Set(['going','shops','buy','bread']);
+        const wrongSet = new Set(["I'm",'to','the','some']);
+        let correctCount = 0, wrongCount = 0;
+        checked.forEach(w => {
+            if (correctSet.has(w)) correctCount++;
+            if (wrongSet.has(w)) wrongCount++;
+        });
+        if (correctCount === 4 && wrongCount === 0) return 2;
+        if (correctCount === 3 && wrongCount === 0) return 1.5;
+        if (correctCount === 4 && wrongCount === 1) return 1;
+        if (correctCount === 2 && wrongCount === 0) return 1;
+        if (correctCount === 2 && wrongCount === 1) return 0.5;
+        if (correctCount === 3 && wrongCount === 1) return 0.5;
+        return 0;
+    }
+
+    const correctMC = ['b','c','b','a','b','c','b','b','b','b',
+                       'b','c','a','b','b','b','c','d','b','b'];
+    const correctMatch = ['E','I','C','J','F','B','D','G','H','A'];
+    const correctStress = {stress1:'pu', stress2:'pho', stress3:'pan'};
+    const correctTF = ['F','F','T','F','T','T','F','T','F','T'];
+
+    const TOTAL_RAW = 60;
+    let timerInterval, secondsLeft = 7200, testStarted = false, lastFocusedInput = null;
+    let tabSwitchCount = 0;
+    const MAX_TAB_SWITCHES = 3;
+
+    const studentPage = document.getElementById('studentPage');
+    const testContent = document.getElementById('testContent');
+    const startBtn = document.getElementById('startBtn');
+    const submitBtn = document.getElementById('submitBtn');
+    const symbolPalette = document.getElementById('symbolPalette');
+    const resultsPage = document.getElementById('resultsPage');
+    const mainContainer = document.getElementById('mainContainer');
+
+    document.addEventListener('focusin', (e) => {
+        if (e.target.matches('input[type="text"], textarea')) lastFocusedInput = e.target;
+    });
+
+    symbolPalette.querySelectorAll('button').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (!lastFocusedInput) return;
+            const sym = btn.textContent;
+            const start = lastFocusedInput.selectionStart;
+            const end = lastFocusedInput.selectionEnd;
+            const text = lastFocusedInput.value;
+            lastFocusedInput.value = text.slice(0, start) + sym + text.slice(end);
+            lastFocusedInput.focus();
+        });
+    });
+
+    function shuffleArray(arr) {
+        for (let i = arr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+    }
+
+    function renumberSection(section) {
+        const questions = section.querySelectorAll('.question');
+        questions.forEach((q, idx) => {
+            const p = q.querySelector('p');
+            if (p) p.innerHTML = p.innerHTML.replace(/^\d+\./, (idx + 1) + '.');
+        });
+        const matchRows = section.querySelectorAll('.matching-row');
+        matchRows.forEach((row, idx) => {
+            const span = row.querySelector('span');
+            if (span) {
+                const desc = span.textContent.replace(/^\d+\.\s*/, '');
+                span.textContent = (idx + 1) + '. ' + desc;
+            }
+        });
+    }
+
+    function shuffleAllSections() {
+        const sections = document.querySelectorAll('.section');
+        sections.forEach(sec => {
+            if (sec.id === 'practicalSection') return;
+            const items = Array.from(sec.querySelectorAll('.question, .matching-row, .stress-row'));
+            if (items.length > 0) {
+                const parent = items[0].parentNode;
+                shuffleArray(items);
+                items.forEach(el => parent.appendChild(el));
+                renumberSection(sec);
+            }
+        });
+    }
+
+    function startTimer() {
+        timerInterval = setInterval(() => {
+            secondsLeft--;
+            const h = Math.floor(secondsLeft/3600), m = Math.floor((secondsLeft%3600)/60), s = secondsLeft%60;
+            document.getElementById('timerDisplay').textContent =
+                `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+            if (secondsLeft <= 0) {
+                clearInterval(timerInterval);
+                alert('Time is up! Submitting automatically.');
+                submitTest();
+            }
+        }, 1000);
+    }
+
+    function handleVisibilityChange() {
+        if (document.hidden && testStarted) {
+            tabSwitchCount++;
+            if (tabSwitchCount >= MAX_TAB_SWITCHES) {
+                alert(`You have switched tabs ${tabSwitchCount} times. Your test will now be submitted automatically.`);
+                submitTest();
+            } else {
+                alert(`Warning: You have switched away from the test! (${tabSwitchCount}/${MAX_TAB_SWITCHES})\nReturn immediately to continue.`);
+            }
+        }
+    }
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    document.addEventListener('keydown', (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key === 't') {
+            e.preventDefault();
+            alert('Opening a new tab is not allowed during the test.');
+        }
+    });
+
+    window.addEventListener('beforeunload', (e) => {
+        if (testStarted && secondsLeft > 0) { e.preventDefault(); e.returnValue = ''; }
+    });
+
+    function checkAllAnswered() {
+        const unanswered = [];
+        for (let i=1; i<=20; i++) if (!document.querySelector(`input[name="mc${i}"]:checked`)) unanswered.push(`MC ${i}`);
+        for (let i=1; i<=10; i++) if (!document.querySelector(`input[name="fb${i}"]`)?.value.trim()) unanswered.push(`Fill ${i}`);
+        for (let i=1; i<=10; i++) if (!document.querySelector(`select[name="match${i}"]`)?.value) unanswered.push(`Match ${i}`);
+        for (let i=1; i<=10; i++) if (!document.querySelector(`input[name="tf${i}"]:checked`)) unanswered.push(`T/F ${i}`);
+        if (!document.querySelector('input[name="transcribe"]')?.value.trim()) unanswered.push('Transcription');
+        ['stress1','stress2','stress3'].forEach((n,i)=> { if (!document.querySelector(`input[name="${n}"]:checked`)) unanswered.push(`Word stress ${i+1}`); });
+        if (!document.querySelector('input[name="connected"]')?.value.trim()) unanswered.push('Connected speech');
+        if (!document.querySelector('input[name="elisionDesc"]')?.value.trim()) unanswered.push('Elision');
+        if (!document.querySelector('input[name="assimDesc"]')?.value.trim()) unanswered.push('Assimilation');
+        if (document.querySelectorAll('input[name="stressWord"]:checked').length===0) unanswered.push('Sentence stress');
+        return unanswered;
+    }
+
+    function submitTest() {
+        clearInterval(timerInterval);
+        let rawScore = 0;
+        const details = [];
+
+        for (let i=1; i<=20; i++) {
+            const sel = document.querySelector(`input[name="mc${i}"]:checked`);
+            const user = sel ? sel.value : '';
+            if (user === correctMC[i-1]) rawScore += 1;
+            details.push({q:`MC ${i}`, user, correct: correctMC[i-1], ok: user===correctMC[i-1]});
+        }
+        for (let i=1; i<=10; i++) {
+            const inp = document.querySelector(`input[name="fb${i}"]`);
+            const user = inp ? inp.value.trim() : '';
+            const score = gradeFillBlank(i, user);
+            rawScore += score;
+            details.push({q:`Fill ${i}`, user, correct: fillBlankDisplay[i] || 'see key', ok: score>=0.5});
+        }
+        for (let i=1; i<=10; i++) {
+            const sel = document.querySelector(`select[name="match${i}"]`);
+            const user = sel ? sel.value : '';
+            if (user === correctMatch[i-1]) rawScore += 1;
+            details.push({q:`Match ${i}`, user, correct: correctMatch[i-1], ok: user===correctMatch[i-1]});
+        }
+        for (let i=1; i<=10; i++) {
+            const sel = document.querySelector(`input[name="tf${i}"]:checked`);
+            const user = sel ? sel.value : '';
+            if (user === correctTF[i-1]) rawScore += 1;
+            details.push({q:`T/F ${i}`, user, correct: correctTF[i-1], ok: user===correctTF[i-1]});
+        }
+
+        const transVal = document.querySelector('input[name="transcribe"]')?.value || '';
+        const transScore = gradeTranscription(transVal);
+        rawScore += transScore;
+        details.push({q:'Transcription', user: transVal, correct:'/ˈkɑːsəl/ or /ˈkæsəl/', ok: transScore===2});
+
+        ['stress1','stress2','stress3'].forEach(name => {
+            const sel = document.querySelector(`input[name="${name}"]:checked`);
+            const user = sel ? sel.value : '';
+            if (user === correctStress[name]) rawScore += 1;
+            details.push({q:`Stress ${name}`, user, correct: correctStress[name], ok: user===correctStress[name]});
+        });
+
+        const connScore = gradeConnectedSpeech(document.querySelector('input[name="connected"]')?.value || '');
+        rawScore += connScore;
+        details.push({q:'Connected speech', user: document.querySelector('input[name="connected"]')?.value, correct:'hi mʌs bi taɪəd', ok: connScore===1});
+
+        const elScore = gradeElisionDesc(document.querySelector('input[name="elisionDesc"]')?.value || '');
+        rawScore += elScore;
+        details.push({q:'Elision desc', user: document.querySelector('input[name="elisionDesc"]')?.value, correct:'/t/ in must deleted', ok: elScore===1});
+
+        const assScore = gradeAssimilationDesc(document.querySelector('input[name="assimDesc"]')?.value || '');
+        rawScore += assScore;
+        details.push({q:'Assim/weak', user: document.querySelector('input[name="assimDesc"]')?.value, correct:'he → /i/ or /t/→[p]', ok: assScore===1});
+
+        const sentScore = gradeSentenceStress();
+        rawScore += sentScore;
+        const checkedWords = Array.from(document.querySelectorAll('input[name="stressWord"]:checked')).map(cb=>cb.value).join(', ');
+        details.push({q:'Sentence stress', user: checkedWords, correct:'going, shops, buy, bread', ok: sentScore===2});
+
+        const finalScore = Math.round((rawScore / TOTAL_RAW) * 100);
+        document.getElementById('finalScoreSpan').textContent = finalScore;
+
+        let html = '<table class="correction-table"><tr><th>Question</th><th>Your answer</th><th>Correct</th><th>✔/✘</th></tr>';
+        details.forEach(d => {
+            html += `<tr class="${d.ok ? 'correct-ans' : 'wrong-ans'}"><td>${d.q}</td><td>${d.user}</td><td>${d.correct}</td><td>${d.ok ? '✔' : '✘'}</td></tr>`;
+        });
+        html += '</table>';
+        document.getElementById('corrections').innerHTML = html;
+
+        mainContainer.style.display = 'none';
+        resultsPage.style.display = 'block';
+        symbolPalette.style.display = 'none';
+
+        if (GOOGLE_SHEET_URL !== 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE') {
+            fetch(GOOGLE_SHEET_URL, {
+                method: 'POST', mode: 'no-cors',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    name: document.getElementById('studentName').value.trim(),
+                    id: document.getElementById('studentID').value.trim(),
+                    rawScore, finalScore,
+                    answers: details.map(d => d.user).join('|')
+                })
+            }).catch(e => console.log('Sheet error', e));
+        }
+    }
+
+    startBtn.onclick = () => {
+        if (!document.getElementById('studentName').value.trim() || !document.getElementById('studentID').value.trim()) {
+            alert('Please enter your name and ID.'); return;
+        }
+        studentPage.style.display = 'none';
+        testContent.style.display = 'block';
+        symbolPalette.style.display = 'flex';
+        testStarted = true;
+        startTimer();
+        shuffleAllSections();
+    };
+
+    submitBtn.onclick = () => {
+        const unanswered = checkAllAnswered();
+        if (unanswered.length) {
+            alert(`You haven't answered:\n${unanswered.join('\n')}`);
+            return;
+        }
+        document.getElementById('confirmModal').style.display = 'flex';
+    };
+
+    document.getElementById('noBtn').onclick = () => document.getElementById('confirmModal').style.display = 'none';
+    document.getElementById('yesBtn').onclick = () => {
+        document.getElementById('confirmModal').style.display = 'none';
+        submitTest();
+    };
+})();
+</script>
+</body>
+</html>
