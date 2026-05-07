@@ -85,45 +85,17 @@
         .correction-table th { background: #0c4a6e; color: white; padding: 0.5rem; }
         .correction-table td { padding: 0.5rem; border-bottom: 1px solid #e2e8f0; }
         .correct-ans { background: #dcfce7; } .wrong-ans { background: #fee2e2; }
-@media print {
-    /* Hide everything except the results page */
-    body {
-        background: white;
-        padding: 0;
-    }
-    .container, .section, .btn, #mainContainer, #studentPage, #testContent,
-    .symbol-palette, .modal, .timer, .university-header, .instructions,
-    #printBtn, form, #submitBtn, #confirmModal {
-        display: none !important;
-    }
-    .results-page {
-        display: block !important;
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        margin: 0;
-        padding: 1rem;
-        background: white;
-        border: none;
-        box-shadow: none;
-    }
-    .correction-table {
-        width: 100%;
-        font-size: 12px;
-    }
-    .correction-table th, .correction-table td {
-        padding: 4px 6px;
-        border: 1px solid #999;
-    }
-    .score-highlight {
-        font-size: 2rem;
-    }
-    /* Ensure the print button itself is hidden */
-    #printBtn {
-        display: none !important;
-    }
-}
+        @media print {
+            body { background: white; padding: 0; }
+            .container, .section, .btn, #mainContainer, #studentPage, #testContent,
+            .symbol-palette, .modal, .timer, .university-header, .instructions,
+            #printBtn, form, #submitBtn, #confirmModal { display: none !important; }
+            .results-page { display: block !important; position: absolute; top: 0; left: 0; width: 100%; margin: 0; padding: 1rem; background: white; border: none; box-shadow: none; }
+            .correction-table { width: 100%; font-size: 12px; }
+            .correction-table th, .correction-table td { padding: 4px 6px; border: 1px solid #999; }
+            .score-highlight { font-size: 2rem; }
+            #printBtn { display: none !important; }
+        }
     </style>
 </head>
 <body>
@@ -301,10 +273,10 @@
     <h2>🎓 Test Completed</h2>
     <p>Your score: <span class="score-highlight" id="finalScoreSpan"></span> / 100</p>
     <div id="corrections"></div>
-<div style="text-align:center; margin-top:2rem;">
-    <button class="btn" onclick="window.print()" id="printBtn">🖨️ Download PDF</button>
-    <p style="font-size:0.9rem; margin-top:0.5rem; color:#64748b;">Click the button, then choose “Save as PDF” in the print dialog.</p>
-</div>
+    <div style="text-align:center; margin-top:2rem;">
+        <button class="btn" onclick="window.print()" id="printBtn">🖨️ Download PDF</button>
+        <p style="font-size:0.9rem; margin-top:0.5rem; color:#64748b;">Click the button, then choose “Save as PDF” in the print dialog.</p>
+    </div>
 </div>
 
 <script>
@@ -324,6 +296,36 @@
         9: "intrusive, intrusive r, intrusive /r/",
         10: "content, content words, lexical, lexical words"
     };
+
+    // Accepted answers arrays for connected speech sub‑parts (for result display)
+    const connectedDisplay = [
+        "/hi ˈmʌs bi ˈtaɪəd/",
+        "/i ˈmʌs bi ˈtaɪəd/",
+        "/hi ˈmʌsp bi ˈtaɪəd/",
+        "/i ˈmʌsp bi ˈtaɪəd/",
+        "(any variant with stressed /taɪəd/ or /taɪɚd/; rhotic accepted)"
+    ].join(" ; ");
+
+    const elisionDisplay = [
+        "the /t/ in 'must' is deleted",
+        "/t/ elision",
+        "deletion of /t/",
+        "must loses its /t/",
+        "/t/ is dropped",
+        "t‑deletion in must"
+    ].join(" ; ");
+
+    const assimDisplay = [
+        "he → /i/ (weak form / h‑dropping)",
+        "/h/ elision in he",
+        "he is reduced to /i/",
+        "weak form of he",
+        "h‑dropping",
+        "assimilation: /t/ → [p] before /b/",
+        "/mʌsp bi/",
+        "/t/ assimilates to /p/",
+        "place assimilation → bilabial"
+    ].join(" ; ");
 
     // ---------- TOLERANT GRADING FUNCTIONS ----------
     function normalizeAnswer(str) {
@@ -366,39 +368,41 @@
     }
 
     function gradeTranscription(value) {
-    // Remove slashes, brackets, spaces, stress marks, and convert to lower case
-    let raw = value.trim().toLowerCase().replace(/[\/\[\]\sˈˌ]/g, '');
-    // Unify any length marks (both ː and : become one character, then optional)
-    raw = raw.replace(/[ː:]/g, 'ː');   // turn all colons into IPA length mark
-    if (raw.includes('t')) return 0;
-    // Allow: k ɑ (with or without length mark) s ə l   OR   k æ s ə l
-    const vowelOk = /kɑː?səl|kæsəl/.test(raw);
-    return vowelOk ? 2 : 1;
-}
+        // remove slashes, brackets, spaces, stress marks, length marks, parentheses
+        let raw = value.trim().toLowerCase().replace(/[\/\[\]\sˈˌ()]/g, '');
+        raw = raw.replace(/[ː:]/g, 'ː');          // unify length marks
+        raw = raw.replace(/[l̩]/g, 'l');           // syllabic l → plain l
+        if (raw.includes('t')) return 0;
+        // accept kɑː?səl, kæsəl, kɑː?sl, kæsl (after simplification)
+        const vowelOk = /k(ɑː?|æ)s(ə)?l/.test(raw);
+        return vowelOk ? 2 : 1;
+    }
 
     function gradeConnectedSpeech(value) {
-    let input = value.trim().toLowerCase().replace(/[\/\[\]\sˈˌ]/g, '');
-    input = input.replace(/[ː:]/g, 'ː');   // unify length marks
-    // Does the answer start with "hi" or "i" (reduced he) AND contain "mʌs" (no t)?
-    const hasReducedHe = /^(hi|i)/.test(input);
-    // Check for "mʌs" optionally followed by a bilabial p (assimilation)
-    const hasMustReduced = /mʌs(p)?/.test(input) && !input.includes('t');
-    if (hasReducedHe && hasMustReduced) return 1;
-    if (hasReducedHe || hasMustReduced) return 0.5;
-    return 0;
-}
+        let input = value.trim().toLowerCase().replace(/[\/\[\]\sˈˌ()]/g, '');
+        input = input.replace(/[ː:]/g, 'ː');
+        const hasReducedHe = /^(hi|i)/.test(input);
+        const hasMustReduced = /mʌs(p)?/.test(input) && !input.includes('t');
+        if (hasReducedHe && hasMustReduced) return 1;
+        if (hasReducedHe || hasMustReduced) return 0.5;
+        return 0;
+    }
 
     function gradeElisionDesc(value) {
         const ans = value.trim().toLowerCase();
-        if (/t.*must|must.*t.*(deleted|elided|dropped)/i.test(ans) || /\/t\/ elision/.test(ans)) return 1;
+        if (/t.*must|must.*t.*(deleted|elided|dropped|loses)/i.test(ans) ||
+            /\/t\/ elision/.test(ans) || /t.?deletion in must/.test(ans)) return 1;
         if (/consonant.*must.*(deleted|dropped)/.test(ans) || /sound deletion.*must/.test(ans)) return 0.5;
         return 0;
     }
 
     function gradeAssimilationDesc(value) {
         const ans = value.trim().toLowerCase();
+        // full credit patterns
         if (/weak form.*he|he.*weak|h.?dropping|he.*\/i\/|he.*reduced.*\/i\//.test(ans)) return 1;
         if (/assimilation.*p.*b|place assimilation.*bilabial|mʌsp/.test(ans)) return 1;
+        if (/he\s*→\s*\/i\//.test(ans)) return 1;
+        // half credit
         if (/he.*weak/.test(ans) || /must.*before.*b/.test(ans)) return 0.5;
         return 0;
     }
@@ -581,7 +585,7 @@
         const transVal = document.querySelector('input[name="transcribe"]')?.value || '';
         const transScore = gradeTranscription(transVal);
         rawScore += transScore;
-        details.push({q:'Transcription', user: transVal, correct:'/ˈkɑːsəl/ or /ˈkæsəl/', ok: transScore===2});
+        details.push({q:'Transcription', user: transVal, correct: '/ˈkɑːsəl/ or /ˈkæsəl/ (no /t/)', ok: transScore===2});
 
         ['stress1','stress2','stress3'].forEach(name => {
             const sel = document.querySelector(`input[name="${name}"]:checked`);
@@ -592,15 +596,15 @@
 
         const connScore = gradeConnectedSpeech(document.querySelector('input[name="connected"]')?.value || '');
         rawScore += connScore;
-        details.push({q:'Connected speech', user: document.querySelector('input[name="connected"]')?.value, correct:'hi mʌs bi taɪəd', ok: connScore===1});
+        details.push({q:'Connected speech', user: document.querySelector('input[name="connected"]')?.value, correct: connectedDisplay, ok: connScore===1});
 
         const elScore = gradeElisionDesc(document.querySelector('input[name="elisionDesc"]')?.value || '');
         rawScore += elScore;
-        details.push({q:'Elision desc', user: document.querySelector('input[name="elisionDesc"]')?.value, correct:'/t/ in must deleted', ok: elScore===1});
+        details.push({q:'Elision desc', user: document.querySelector('input[name="elisionDesc"]')?.value, correct: elisionDisplay, ok: elScore===1});
 
         const assScore = gradeAssimilationDesc(document.querySelector('input[name="assimDesc"]')?.value || '');
         rawScore += assScore;
-        details.push({q:'Assim/weak', user: document.querySelector('input[name="assimDesc"]')?.value, correct:'he → /i/ or /t/→[p]', ok: assScore===1});
+        details.push({q:'Assim/weak', user: document.querySelector('input[name="assimDesc"]')?.value, correct: assimDisplay, ok: assScore===1});
 
         const sentScore = gradeSentenceStress();
         rawScore += sentScore;
