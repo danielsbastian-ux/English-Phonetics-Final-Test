@@ -94,16 +94,24 @@
         .correction-table th { background: #0c4a6e; color: white; padding: 0.5rem; }
         .correction-table td { padding: 0.5rem; border-bottom: 1px solid #e2e8f0; }
         .correct-ans { background: #dcfce7; } .wrong-ans { background: #fee2e2; }
+        /* Unanswered notification modal */
+        .unanswered-modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); align-items: center; justify-content: center; z-index: 1001;
+        }
+        .unanswered-content {
+            background: white; padding: 2rem; border-radius: 1.5rem; text-align: center;
+            max-width: 500px; width: 90%; box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
         @media print {
             body { background: white; padding: 0; }
             .container, .section, .btn, #mainContainer, #studentPage, #testContent,
             .symbol-palette, .modal, .timer, .university-header, .instructions,
-            #printBtn, form, #submitBtn, #confirmModal { display: none !important; }
+            #printBtn, form, #submitBtn, #confirmModal, .unanswered-modal { display: none !important; }
             .results-page { display: block !important; position: absolute; top: 0; left: 0; width: 100%; margin: 0; padding: 1rem; background: white; border: none; box-shadow: none; }
             .correction-table { width: 100%; font-size: 12px; }
             .correction-table th, .correction-table td { padding: 4px 6px; border: 1px solid #999; }
             .score-highlight { font-size: 2rem; }
-            #printBtn { display: none !important; }
         }
     </style>
 </head>
@@ -143,7 +151,8 @@
     <div id="testContent" style="display:none;">
         <div class="timer" id="timerDisplay">02:00:00</div>
         <form id="testForm">
-            <!-- SECTION 1: Multiple Choice (20 questions) -->
+            <!-- All sections remain exactly as in previous full version -->
+            <!-- SECTION 1: MC -->
             <div class="section" id="secMC"><h2>📌 Section 1 · Multiple Choice (20 points)</h2>
                 <div class="question"><p>1. The letter <b>c</b> in <i>cease</i> is pronounced as</p><div class="options"><label><input type="radio" name="mc1" value="a"> a) /k/</label><label><input type="radio" name="mc1" value="b"> b) /s/</label><label><input type="radio" name="mc1" value="c"> c) /ʃ/</label><label><input type="radio" name="mc1" value="d"> d) /tʃ/</label></div></div>
                 <div class="question"><p>2. The <b>ch</b> in <i>chef</i> sounds like</p><div class="options"><label><input type="radio" name="mc2" value="a"> a) /tʃ/</label><label><input type="radio" name="mc2" value="b"> b) /k/</label><label><input type="radio" name="mc2" value="c"> c) /ʃ/</label><label><input type="radio" name="mc2" value="d"> d) /dʒ/</label></div></div>
@@ -279,6 +288,15 @@
     </div>
 </div>
 
+<!-- Unanswered questions notification modal (non‑blurring) -->
+<div class="unanswered-modal" id="unansweredModal">
+    <div class="unanswered-content">
+        <h3 style="color:#b91c1c;">⚠️ Incomplete Answers</h3>
+        <p id="unansweredMessage" style="margin:1rem 0; font-weight:500;"></p>
+        <button class="btn" onclick="document.getElementById('unansweredModal').style.display='none'" style="background:#b91c1c;">OK, I'll fill them in</button>
+    </div>
+</div>
+
 <!-- Results page -->
 <div class="container results-page" id="resultsPage">
     <h2>🎓 Test Completed</h2>
@@ -293,9 +311,9 @@
 
 <script>
 (function() {
-    const GOOGLE_SHEET_URL = 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE';
+    const GOOGLE_SHEET_URL = 'https://script.google.com/macros/s/AKfycbzLdLsxhyiOwb6H62GP1ac_CnKpJtBMKUWyPE6O_BHK8ujVBQLht3BDmsE2s6bICxNYEg/exec';
 
-    // TOLERANT GRADING DATA
+    // TOLERANT GRADING DATA (unchanged)
     const fillBlankDisplay = {
         1: "/s/, s, the /s/ sound, /s/ (voiceless alveolar fricative), s sound",
         2: "soft, soft g, a soft g, soft 'g'",
@@ -392,7 +410,7 @@
     };
     document.addEventListener('focusin', (e) => { if (e.target.matches('input[type="text"], textarea')) lastFocusedInput = e.target; });
 
-    // ANTI‑CHEAT: Full‑screen, lockout
+    // ANTI‑CHEAT: Full‑screen, lockout (unchanged)
     function getLockKey() { return `testlock_${document.getElementById('studentName').value.trim()}_${document.getElementById('studentID').value.trim()}`; }
     function isLockedOut() {
         const key = getLockKey(); const lockTime = localStorage.getItem(key);
@@ -431,7 +449,7 @@
         if (!document.getElementById('studentName').value.trim() || !document.getElementById('studentID').value.trim()) {
             alert('Please enter your name and ID.'); return;
         }
-        // Request full‑screen on the document
+        // Request full‑screen
         const el = document.documentElement;
         if (el.requestFullscreen) el.requestFullscreen();
         else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
@@ -465,6 +483,13 @@
 
     window.addEventListener('beforeunload', (e) => { if(testStarted&&secondsLeft>0) { e.preventDefault(); e.returnValue=''; } });
 
+    // Custom non‑blurring alert for unanswered questions
+    function showUnansweredAlert(message) {
+        document.getElementById('unansweredMessage').textContent = message;
+        document.getElementById('unansweredModal').style.display = 'flex';
+    }
+
+    // Check unanswered and use custom modal instead of alert
     function checkAllAnswered() {
         const u=[];
         for(let i=1;i<=20;i++) if(!document.querySelector(`input[name="mc${i}"]:checked`)) u.push(`MC ${i}`);
@@ -479,6 +504,21 @@
         if(document.querySelectorAll('input[name="stressWord"]:checked').length===0) u.push('Sentence stress');
         return u;
     }
+
+    document.getElementById('submitBtn').addEventListener('click', () => {
+        const unanswered = checkAllAnswered();
+        if (unanswered.length) {
+            showUnansweredAlert(`You haven't answered the following:\n${unanswered.join('\n')}`);
+            return;
+        }
+        document.getElementById('confirmModal').style.display = 'flex';
+    });
+
+    document.getElementById('noBtn').onclick = () => document.getElementById('confirmModal').style.display = 'none';
+    document.getElementById('yesBtn').onclick = () => {
+        document.getElementById('confirmModal').style.display = 'none';
+        submitTest();
+    };
 
     function submitTest() {
         clearInterval(timerInterval); testStarted=false;
@@ -507,10 +547,6 @@
         if(GOOGLE_SHEET_URL!=='YOUR_GOOGLE_APPS_SCRIPT_URL_HERE'){ fetch(GOOGLE_SHEET_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:document.getElementById('studentName').value.trim(),id:document.getElementById('studentID').value.trim(),rawScore,finalScore,answers:details.map(d=>d.user).join('|')})}).catch(e=>console.log('Sheet error',e)); }
         testEndReason=null;
     }
-
-    document.getElementById('submitBtn').addEventListener('click',()=>{ const u=checkAllAnswered(); if(u.length){ alert(`You haven't answered:\n${u.join('\n')}`); return; } document.getElementById('confirmModal').style.display='flex'; });
-    document.getElementById('noBtn').onclick=()=>document.getElementById('confirmModal').style.display='none';
-    document.getElementById('yesBtn').onclick=()=>{ document.getElementById('confirmModal').style.display='none'; submitTest(); };
 })();
 </script>
 </body>
