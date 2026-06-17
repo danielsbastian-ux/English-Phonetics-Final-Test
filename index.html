@@ -1,553 +1,1177 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>English Phonetics Final Test</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(145deg, #e0f2fe 0%, #f0f9ff 100%);
-            color: #1e293b; line-height: 1.6; padding: 2rem 1rem;
-            display: flex; flex-direction: column; align-items: center; min-height: 100vh;
-        }
-        .container {
-            max-width: 1050px; width: 100%;
-            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(16px);
-            border-radius: 2rem; box-shadow: 0 25px 50px -12px rgba(0, 100, 150, 0.15);
-            padding: 2.5rem 3rem; margin: 1rem 0;
-        }
-        .university-header { text-align: center; border-bottom: 2px solid #bae6fd; padding-bottom: 1.8rem; margin-bottom: 2rem; }
-        .university-header .test-title {
-            font-size: 2.5rem; font-weight: 700;
-            background: linear-gradient(135deg, #0c4a6e, #0369a1);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-        }
-        .university-header .uni-name { font-size: 1.4rem; color: #0c4a6e; }
-        .btn {
-            background: #0c4a6e; color: white; border: none;
-            padding: 0.9rem 2.5rem; font-size: 1.1rem; border-radius: 3rem;
-            cursor: pointer; font-weight: 600; box-shadow: 0 8px 16px rgba(12, 74, 110, 0.3);
-            transition: 0.3s; display: inline-flex; align-items: center; gap: 0.4rem;
-        }
-        .btn:hover { background: #075985; transform: translateY(-3px); }
-        .timer {
-            background: #0f172a; color: #7dd3fc; padding: 0.5rem 2rem;
-            border-radius: 3rem; font-size: 1.6rem; font-weight: 700; margin: 1.5rem 0;
-            display: inline-block;
-        }
-        .section {
-            margin: 2rem 0; background: white; border-radius: 1.5rem; padding: 1.8rem 2rem;
-            box-shadow: 0 5px 18px rgba(0,0,0,0.03); border: 1px solid #e0f2fe;
-        }
-        .section h2 { color: #0c4a6e; border-bottom: 2px dashed #bae6fd; padding-bottom: 0.4rem; margin-bottom: 1.2rem; }
-        .question { margin: 1.2rem 0 1.2rem 1rem; }
-        .question p { font-weight: 600; margin-bottom: 0.5rem; }
-        .options { display: flex; flex-wrap: wrap; gap: 0.6rem 1.2rem; align-items: center; }
-        .options label {
-            display: flex; align-items: center; gap: 0.3rem;
-            background: #f8fafc; padding: 0.35rem 0.9rem; border-radius: 0.6rem;
-            border: 1px solid #e2e8f0; cursor: pointer; transition: 0.15s;
-        }
-        .options label:hover { background: #e0f2fe; border-color: #0284c7; }
-        .fill-blank input, .transcribe-input input {
-            width: 100%; max-width: 500px; padding: 0.5rem;
-            font-family: 'Courier New', monospace; border: 1px solid #cbd5e1; border-radius: 0.5rem;
-        }
-        .matching-reference {
-            background: #f0f9ff; border: 1px solid #bae6fd; padding: 1rem;
-            border-radius: 0.8rem; display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 0.5rem;
-        }
-        .matching-row { display: flex; align-items: center; gap: 1rem; margin: 0.4rem 0; }
-        .stress-row { display: flex; align-items: center; gap: 1rem; margin: 0.5rem 0; }
-        .checkbox-group label { margin-right: 1.5rem; }
-        .tf-options { display: flex; gap: 1.5rem; margin-top: 0.3rem; }
-        .phoneme-toggle-btn {
-            background: #e0f2fe; border: 1px solid #0284c7; border-radius: 0.5rem;
-            cursor: pointer; font-size: 0.9rem; font-weight: 600; color: #0c4a6e;
-            padding: 0.35rem 0.8rem; margin-left: 0.5rem; white-space: nowrap;
-            vertical-align: middle;
-        }
-        .symbol-palette {
-            position: fixed; bottom: 20px; right: 20px;
-            background: white; border: 2px solid #0284c7; border-radius: 1.2rem;
-            padding: 0.5rem; display: none; flex-wrap: wrap; gap: 0.3rem; z-index: 999;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1); max-width: 360px;
-        }
-        .symbol-palette.show { display: flex; }
-        .symbol-palette button {
-            background: #f0f9ff; border: 1px solid #7dd3fc; border-radius: 0.5rem;
-            font-family: 'Courier New', monospace; font-size: 1rem;
-            padding: 0.3rem 0.5rem; cursor: pointer;
-        }
-        .modal {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5); align-items: center; justify-content: center; z-index: 1000;
-        }
-        .modal-content { background: white; padding: 2rem; border-radius: 1.5rem; text-align: center; }
-        .results-page { display: none; margin-top: 2rem; }
-        .score-highlight { font-size: 3rem; font-weight: 700; color: #0c4a6e; }
-        .correction-table { width: 100%; border-collapse: collapse; margin-top: 1.5rem; }
-        .correction-table th { background: #0c4a6e; color: white; padding: 0.5rem; }
-        .correction-table td { padding: 0.5rem; border-bottom: 1px solid #e2e8f0; }
-        .correct-ans { background: #dcfce7; } .wrong-ans { background: #fee2e2; }
-        /* Unanswered notification modal */
-        .unanswered-modal {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5); align-items: center; justify-content: center; z-index: 1001;
-        }
-        .unanswered-content {
-            background: white; padding: 2rem; border-radius: 1.5rem; text-align: center;
-            max-width: 500px; width: 90%; box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-        }
-        @media print {
-            body { background: white; padding: 0; }
-            .container, .section, .btn, #mainContainer, #studentPage, #testContent,
-            .symbol-palette, .modal, .timer, .university-header, .instructions,
-            #printBtn, form, #submitBtn, #confirmModal, .unanswered-modal { display: none !important; }
-            .results-page { display: block !important; position: absolute; top: 0; left: 0; width: 100%; margin: 0; padding: 1rem; background: white; border: none; box-shadow: none; }
-            .correction-table { width: 100%; font-size: 12px; }
-            .correction-table th, .correction-table td { padding: 4px 6px; border: 1px solid #999; }
-            .score-highlight { font-size: 2rem; }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pre-Lesson Task – Process Paragraphs | ELLE 2208</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;600;700&display=swap');
+
+  :root {
+    --primary: #6C3FC5;
+    --primary-light: #9B6FDF;
+    --accent: #F0C040;
+    --bg: #0E0B1A;
+    --card: #1A1530;
+    --card2: #221D3A;
+    --border: #312A55;
+    --text: #E8E2FF;
+    --muted: #8E84B2;
+    --success: #34D399;
+    --error: #F87171;
+    --warning: #FBBF24;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Animated background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 50% at 20% 20%, rgba(108,63,197,0.18) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 40% at 80% 80%, rgba(240,192,64,0.08) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .stars {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+  }
+
+  .star {
+    position: absolute;
+    width: 2px; height: 2px;
+    border-radius: 50%;
+    background: white;
+    opacity: 0;
+    animation: twinkle var(--d, 4s) var(--delay, 0s) infinite ease-in-out;
+  }
+
+  @keyframes twinkle {
+    0%, 100% { opacity: 0; transform: scale(1); }
+    50% { opacity: var(--op, 0.6); transform: scale(1.5); }
+  }
+
+  /* Landing page */
+  #landing {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg);
+    flex-direction: column;
+    gap: 2rem;
+    padding: 2rem;
+  }
+
+  .logo-anim {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(2rem, 6vw, 3.5rem);
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--primary-light), var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: pulse-text 3s ease-in-out infinite;
+    text-align: center;
+  }
+
+  @keyframes pulse-text {
+    0%, 100% { filter: brightness(1); }
+    50% { filter: brightness(1.3); }
+  }
+
+  .landing-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 2.5rem;
+    width: 100%;
+    max-width: 480px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .landing-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary), var(--accent), var(--primary));
+    background-size: 200%;
+    animation: shimmer 3s linear infinite;
+  }
+
+  @keyframes shimmer {
+    0% { background-position: 0%; }
+    100% { background-position: 200%; }
+  }
+
+  .landing-card h2 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.3rem;
+    margin-bottom: 1.5rem;
+    color: var(--text);
+  }
+
+  .field-group { margin-bottom: 1.2rem; }
+
+  .field-group label {
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 0.5rem;
+  }
+
+  .field-group input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-size: 1rem;
+    font-family: 'Inter', sans-serif;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+  }
+
+  .field-group input:focus {
+    border-color: var(--primary-light);
+    box-shadow: 0 0 0 3px rgba(155,111,223,0.2);
+  }
+
+  .btn-start {
+    width: 100%;
+    padding: 0.85rem;
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    border: none;
+    border-radius: 12px;
+    color: white;
+    font-size: 1rem;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+    margin-top: 0.5rem;
+  }
+
+  .btn-start:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(108,63,197,0.4); }
+  .btn-start:active { transform: translateY(0); }
+
+  /* Overlay */
+  #overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(14,11,26,0.95);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 2rem;
+    text-align: center;
+  }
+
+  #overlay.show { display: flex; }
+
+  .overlay-icon { font-size: 4rem; animation: bounce 1s ease-in-out infinite; }
+  @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+
+  /* Main app */
+  #app {
+    display: none;
+    position: relative;
+    z-index: 1;
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+  }
+
+  #app.show { display: block; }
+
+  /* Header bar */
+  .header-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1rem 1.5rem;
+    margin-bottom: 2rem;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .header-info { display: flex; flex-direction: column; gap: 0.2rem; }
+  .header-title { font-family: 'Space Grotesk', sans-serif; font-size: 1.1rem; font-weight: 600; }
+  .header-sub { font-size: 0.78rem; color: var(--muted); }
+
+  .timer-box {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0.5rem 1rem;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    min-width: 90px;
+    justify-content: center;
+  }
+
+  .timer-box.warning { border-color: var(--warning); color: var(--warning); }
+  .timer-box.danger { border-color: var(--error); color: var(--error); animation: flash 0.5s ease-in-out infinite; }
+  @keyframes flash { 0%,100%{opacity:1} 50%{opacity:0.5} }
+
+  .student-badge {
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0.4rem 0.9rem;
+    font-size: 0.82rem;
+    color: var(--muted);
+  }
+  .student-badge strong { color: var(--text); }
+
+  /* Section cards */
+  .section-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.8rem;
+    margin-bottom: 1.5rem;
+    position: relative;
+    overflow: hidden;
+    animation: fadeInUp 0.4s ease both;
+  }
+
+  @keyframes fadeInUp {
+    from { opacity:0; transform: translateY(20px); }
+    to { opacity:1; transform: translateY(0); }
+  }
+
+  .section-card:nth-child(2) { animation-delay: 0.1s; }
+  .section-card:nth-child(3) { animation-delay: 0.2s; }
+  .section-card:nth-child(4) { animation-delay: 0.3s; }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    margin-bottom: 1.2rem;
+  }
+
+  .section-badge {
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    color: white;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 0.25rem 0.7rem;
+    border-radius: 20px;
+  }
+
+  .section-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.05rem;
+    font-weight: 600;
+  }
+
+  .model-box {
+    background: var(--card2);
+    border-left: 3px solid var(--primary-light);
+    border-radius: 0 12px 12px 0;
+    padding: 1.2rem 1.4rem;
+    margin: 1rem 0;
+    font-size: 0.9rem;
+    line-height: 1.7;
+    color: var(--muted);
+  }
+
+  .model-box strong { color: var(--text); display: block; margin-bottom: 0.5rem; }
+
+  .signal-box {
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1rem 1.3rem;
+    margin: 1rem 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .signal-chip {
+    background: rgba(108,63,197,0.2);
+    border: 1px solid rgba(108,63,197,0.4);
+    border-radius: 20px;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.85rem;
+    color: var(--primary-light);
+    font-style: italic;
+  }
+
+  /* Categorization table */
+  .cat-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+  }
+
+  .cat-table th {
+    background: rgba(108,63,197,0.25);
+    padding: 0.7rem 0.8rem;
+    text-align: left;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--primary-light);
+    border: 1px solid var(--border);
+  }
+
+  .cat-table td {
+    border: 1px solid var(--border);
+    padding: 0.4rem;
+    vertical-align: top;
+  }
+
+  .drop-zone {
+    min-height: 60px;
+    background: var(--card2);
+    border: 2px dashed var(--border);
+    border-radius: 8px;
+    padding: 0.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    align-content: flex-start;
+    transition: border-color 0.2s, background 0.2s;
+    cursor: pointer;
+  }
+
+  .drop-zone.drag-over {
+    border-color: var(--primary-light);
+    background: rgba(108,63,197,0.1);
+  }
+
+  .draggable-chip {
+    background: rgba(240,192,64,0.15);
+    border: 1px solid rgba(240,192,64,0.4);
+    border-radius: 20px;
+    padding: 0.2rem 0.65rem;
+    font-size: 0.82rem;
+    color: var(--accent);
+    cursor: grab;
+    user-select: none;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+
+  .draggable-chip:hover { transform: scale(1.05); box-shadow: 0 2px 8px rgba(240,192,64,0.3); }
+  .draggable-chip.dragging { opacity: 0.4; cursor: grabbing; }
+
+  .chips-source {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    min-height: 40px;
+    padding: 0.5rem;
+    background: var(--card2);
+    border-radius: 10px;
+    border: 1px solid var(--border);
+  }
+
+  /* Text areas */
+  .q-label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    line-height: 1.5;
+    color: var(--text);
+  }
+
+  .q-label span.qnum {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px; height: 24px;
+    background: var(--primary);
+    border-radius: 50%;
+    font-size: 0.75rem;
+    font-weight: 700;
+    margin-right: 0.5rem;
+    flex-shrink: 0;
+  }
+
+  textarea {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-size: 0.9rem;
+    font-family: 'Inter', sans-serif;
+    resize: vertical;
+    min-height: 80px;
+    line-height: 1.6;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    margin-bottom: 1rem;
+  }
+
+  textarea:focus {
+    border-color: var(--primary-light);
+    box-shadow: 0 0 0 3px rgba(155,111,223,0.15);
+  }
+
+  .question-block { margin-bottom: 1.2rem; }
+
+  /* Submit area */
+  .submit-area {
+    text-align: center;
+    margin-top: 2rem;
+  }
+
+  .btn-submit {
+    padding: 0.9rem 3.5rem;
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    border: none;
+    border-radius: 12px;
+    color: white;
+    font-size: 1rem;
+    font-weight: 700;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+    letter-spacing: 0.05em;
+  }
+
+  .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(108,63,197,0.5); }
+
+  /* Confirm modal */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(14,11,26,0.85);
+    z-index: 300;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+  }
+  .modal-overlay.show { display: flex; }
+
+  .modal-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 2rem;
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+    position: relative;
+  }
+
+  .modal-card h3 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .modal-card p { font-size: 0.9rem; color: var(--muted); margin-bottom: 1.5rem; }
+
+  .modal-btns { display: flex; gap: 1rem; justify-content: center; }
+
+  .btn-yes {
+    padding: 0.7rem 2rem;
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    border: none; border-radius: 10px;
+    color: white; font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer; font-size: 0.95rem;
+    transition: transform 0.15s;
+  }
+  .btn-yes:hover { transform: scale(1.04); }
+
+  .btn-no {
+    padding: 0.7rem 2rem;
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--muted); font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer; font-size: 0.95rem;
+    transition: border-color 0.15s;
+  }
+  .btn-no:hover { border-color: var(--primary-light); color: var(--text); }
+
+  /* Results page */
+  #results {
+    display: none;
+    position: relative;
+    z-index: 1;
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+  }
+  #results.show { display: block; }
+
+  .results-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+    animation: fadeInUp 0.5s ease both;
+  }
+
+  .results-header h1 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(1.5rem, 4vw, 2.2rem);
+    background: linear-gradient(135deg, var(--primary-light), var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 0.4rem;
+  }
+
+  .score-circle {
+    width: 120px; height: 120px;
+    border-radius: 50%;
+    background: conic-gradient(var(--primary) var(--pct, 0%), var(--card2) var(--pct, 0%));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 1.5rem auto;
+    position: relative;
+  }
+
+  .score-circle::before {
+    content: '';
+    width: 90px; height: 90px;
+    border-radius: 50%;
+    background: var(--card);
+    position: absolute;
+  }
+
+  .score-circle span {
+    position: relative;
+    z-index: 1;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .result-item {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.4rem;
+    margin-bottom: 1rem;
+    animation: fadeInUp 0.4s ease both;
+  }
+
+  .result-item-header {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .result-badge {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .result-badge.correct { background: rgba(52,211,153,0.2); color: var(--success); border: 1px solid rgba(52,211,153,0.4); }
+  .result-badge.partial { background: rgba(251,191,36,0.2); color: var(--warning); border: 1px solid rgba(251,191,36,0.4); }
+  .result-badge.incorrect { background: rgba(248,113,113,0.2); color: var(--error); border: 1px solid rgba(248,113,113,0.4); }
+
+  .result-label { font-size: 0.85rem; font-weight: 500; }
+
+  .result-student { font-size: 0.85rem; background: var(--card2); border-radius: 8px; padding: 0.6rem 0.8rem; margin-top: 0.5rem; }
+  .result-student em { color: var(--muted); font-style: normal; }
+
+  .result-correct-ans {
+    font-size: 0.82rem;
+    color: var(--success);
+    margin-top: 0.5rem;
+    padding: 0.5rem 0.8rem;
+    background: rgba(52,211,153,0.08);
+    border-radius: 8px;
+  }
+
+  .progress-bar {
+    height: 4px;
+    background: var(--card2);
+    border-radius: 2px;
+    margin: 0.5rem 0;
+  }
+
+  .progress-fill {
+    height: 100%;
+    border-radius: 2px;
+    background: linear-gradient(90deg, var(--primary), var(--primary-light));
+    transition: width 1s ease;
+  }
+
+  /* Unanswered warning */
+  .warn-banner {
+    display: none;
+    background: rgba(251,191,36,0.12);
+    border: 1px solid rgba(251,191,36,0.4);
+    border-radius: 10px;
+    padding: 0.8rem 1rem;
+    font-size: 0.88rem;
+    color: var(--warning);
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+
+  .warn-banner.show { display: block; animation: fadeInUp 0.3s ease; }
+
+  /* Cheating overlay */
+  #cheat-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: var(--bg);
+    z-index: 500;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+    padding: 2rem;
+  }
+  #cheat-overlay.show { display: flex; }
+  .cheat-icon { font-size: 4rem; }
+  .cheat-count-badge {
+    background: var(--error);
+    color: white;
+    border-radius: 20px;
+    padding: 0.3rem 1rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+  }
+
+  .progress-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-bottom: 0.3rem;
+  }
+
+  @media (max-width: 600px) {
+    .header-bar { flex-direction: column; align-items: flex-start; }
+    .cat-table { font-size: 0.78rem; }
+  }
+</style>
 </head>
 <body>
-<div class="container" id="mainContainer">
-    <div class="university-header">
-        <div class="test-title">English Phonetics Final Test</div>
-        <div class="uni-name">Jakarta International University</div>
-        <div class="subtitle">📖 Spelling, Pronunciation & Connected Speech · GB English</div>
-    </div>
 
-    <div id="studentPage">
-        <div style="display:flex; gap:2rem; flex-wrap:wrap; align-items:center; background:#f0f9ff; padding:1.5rem; border-radius:1rem; margin:2rem 0;">
-            <div>
-                <label style="font-weight:600;">👤 Student Name</label>
-                <input type="text" id="studentName" placeholder="Full name" style="padding:0.6rem; border-radius:0.5rem; border:1px solid #cbd5e1; width:240px;">
-            </div>
-            <div>
-                <label style="font-weight:600;">🎓 Student ID</label>
-                <input type="text" id="studentID" placeholder="e.g. 20231234" style="padding:0.6rem; border-radius:0.5rem; border:1px solid #cbd5e1; width:240px;">
-            </div>
-        </div>
-        <div style="background:#fef9c3; border-left:6px solid #eab308; padding:1rem 1.5rem; border-radius:0.8rem; margin:1.5rem 0 2rem;">
-            <h3 style="color:#0c4a6e;">⏳ Test Instructions</h3>
-            <ul style="list-style:none; padding-left:0;">
-                <li>🕒 This test lasts <strong>2 hours</strong>. Timer starts with <em>Start Test</em>.</li>
-                <li>📝 Answer all questions – you'll be reminded if any are left empty.</li>
-                <li>🏆 Your final score (out of 100) appears after submission.</li>
-                <li>🚫 Do not refresh or close the page during the test.</li>
-                <li>🔒 <strong>The test must be taken in full‑screen mode.</strong> Exiting full‑screen will end your test immediately and you will be locked out for 1 minute.</li>
-                <li>⌨️ Use the <strong>Phonemic Symbols</strong> button next to transcription fields to open the symbol palette.</li>
-            </ul>
-        </div>
-        <button class="btn" id="startBtn">🚀 Start Test</button>
-    </div>
+<!-- Stars background -->
+<div class="stars" id="stars"></div>
 
-    <div id="testContent" style="display:none;">
-        <div class="timer" id="timerDisplay">02:00:00</div>
-        <form id="testForm">
-            <!-- All sections remain exactly as in previous full version -->
-            <!-- SECTION 1: MC -->
-            <div class="section" id="secMC"><h2>📌 Section 1 · Multiple Choice (20 points)</h2>
-                <div class="question"><p>1. The letter <b>c</b> in <i>cease</i> is pronounced as</p><div class="options"><label><input type="radio" name="mc1" value="a"> a) /k/</label><label><input type="radio" name="mc1" value="b"> b) /s/</label><label><input type="radio" name="mc1" value="c"> c) /ʃ/</label><label><input type="radio" name="mc1" value="d"> d) /tʃ/</label></div></div>
-                <div class="question"><p>2. The <b>ch</b> in <i>chef</i> sounds like</p><div class="options"><label><input type="radio" name="mc2" value="a"> a) /tʃ/</label><label><input type="radio" name="mc2" value="b"> b) /k/</label><label><input type="radio" name="mc2" value="c"> c) /ʃ/</label><label><input type="radio" name="mc2" value="d"> d) /dʒ/</label></div></div>
-                <div class="question"><p>3. Which word contains a <b>silent b</b>?</p><div class="options"><label><input type="radio" name="mc3" value="a"> a) timber</label><label><input type="radio" name="mc3" value="b"> b) bomb</label><label><input type="radio" name="mc3" value="c"> c) limbo</label><label><input type="radio" name="mc3" value="d"> d) lumber</label></div></div>
-                <div class="question"><p>4. In <i>know</i>, which letter is silent?</p><div class="options"><label><input type="radio" name="mc4" value="a"> a) k</label><label><input type="radio" name="mc4" value="b"> b) n</label><label><input type="radio" name="mc4" value="c"> c) o</label><label><input type="radio" name="mc4" value="d"> d) w</label></div></div>
-                <div class="question"><p>5. <i>sign</i> + <b>-al</b> → <i>signal</i>; the <i>g</i> becomes</p><div class="options"><label><input type="radio" name="mc5" value="a"> a) still silent</label><label><input type="radio" name="mc5" value="b"> b) pronounced /ɡ/</label><label><input type="radio" name="mc5" value="c"> c) /dʒ/</label><label><input type="radio" name="mc5" value="d"> d) /ʒ/</label></div></div>
-                <div class="question"><p>6. The /l/ in <b>play</b> is a</p><div class="options"><label><input type="radio" name="mc6" value="a"> a) clear [l]</label><label><input type="radio" name="mc6" value="b"> b) dark [ɫ]</label><label><input type="radio" name="mc6" value="c"> c) voiceless [l̥]</label><label><input type="radio" name="mc6" value="d"> d) syllabic [l̩]</label></div></div>
-                <div class="question"><p>7. Example of <b>assimilation</b> in connected speech</p><div class="options"><label><input type="radio" name="mc7" value="a"> a) <i>going to</i> → <i>gonna</i></label><label><input type="radio" name="mc7" value="b"> b) <i>footpath</i> → /ˈfʊppɑːθ/</label><label><input type="radio" name="mc7" value="c"> c) <i>sooner or later</i> → /ˈsuːnər ə ˈleɪtə/</label><label><input type="radio" name="mc7" value="d"> d) <i>cupboard</i> → /ˈkʌbəd/</label></div></div>
-                <div class="question"><p>8. In <b>good morning</b> /ɡʊd ˈmɔːnɪŋ/, /d/ can become</p><div class="options"><label><input type="radio" name="mc8" value="a"> a) /ɡ/</label><label><input type="radio" name="mc8" value="b"> b) /b/</label><label><input type="radio" name="mc8" value="c"> c) /n/</label><label><input type="radio" name="mc8" value="d"> d) /m/</label></div></div>
-                <div class="question"><p>9. Compound <b>apple pie</b> – main stress on</p><div class="options"><label><input type="radio" name="mc9" value="a"> a) first element</label><label><input type="radio" name="mc9" value="b"> b) second element</label><label><input type="radio" name="mc9" value="c"> c) both equally</label><label><input type="radio" name="mc9" value="d"> d) neither</label></div></div>
-                <div class="question"><p>10. "I have a book" – <b>have</b> is normally</p><div class="options"><label><input type="radio" name="mc10" value="a"> a) stressed</label><label><input type="radio" name="mc10" value="b"> b) unstressed/reduced</label><label><input type="radio" name="mc10" value="c"> c) a content word</label><label><input type="radio" name="mc10" value="d"> d) full vowel only</label></div></div>
-                <div class="question"><p>11. Why is the <b>k</b> silent in <i>knee</i>?</p><div class="options"><label><input type="radio" name="mc11" value="a"> a) It was never pronounced in English</label><label><input type="radio" name="mc11" value="b"> b) It was once pronounced in Old English but later disappeared</label><label><input type="radio" name="mc11" value="c"> c) It was added by French scribes</label><label><input type="radio" name="mc11" value="d"> d) It represents a vowel</label></div></div>
-                <div class="question"><p>12. Which word contains <b>ch</b> pronounced as /k/?</p><div class="options"><label><input type="radio" name="mc12" value="a"> a) church</label><label><input type="radio" name="mc12" value="b"> b) chef</label><label><input type="radio" name="mc12" value="c"> c) stomach</label><label><input type="radio" name="mc12" value="d"> d) champagne</label></div></div>
-                <div class="question"><p>13. The two main allophones of English /l/ are</p><div class="options"><label><input type="radio" name="mc13" value="a"> a) clear [l] before vowels, dark [ɫ] elsewhere</label><label><input type="radio" name="mc13" value="b"> b) dark [ɫ] before vowels, clear [l] before consonants</label><label><input type="radio" name="mc13" value="c"> c) voiced [l] and voiceless [l̥]</label><label><input type="radio" name="mc13" value="d"> d) syllabic [l̩] and non‑syllabic [l]</label></div></div>
-                <div class="question"><p>14. The sonority scale helps explain</p><div class="options"><label><input type="radio" name="mc14" value="a"> a) why stops are louder than vowels</label><label><input type="radio" name="mc14" value="b"> b) why vowels are the most typical syllable nuclei and sonorant consonants can become syllabic</label><label><input type="radio" name="mc14" value="c"> c) how stress is assigned in English</label><label><input type="radio" name="mc14" value="d"> d) why diphthongs are longer than monophthongs</label></div></div>
-                <div class="question"><p>15. In casual speech, <i>have to</i> (meaning "must") often becomes</p><div class="options"><label><input type="radio" name="mc15" value="a"> a) /ˈhæv tuː/</label><label><input type="radio" name="mc15" value="b"> b) /ˈhæftə/</label><label><input type="radio" name="mc15" value="c"> c) /ˈhæv tə/</label><label><input type="radio" name="mc15" value="d"> d) /ˈhɑːftə/</label></div></div>
-                <div class="question"><p>16. The casual connected‑speech form of <i>want to</i> can be</p><div class="options"><label><input type="radio" name="mc16" value="a"> a) /ˈwɒntɪd/</label><label><input type="radio" name="mc16" value="b"> b) /ˈwɒntə/ or /ˈwɒnə/</label><label><input type="radio" name="mc16" value="c"> c) /ˈwænt tuː/</label><label><input type="radio" name="mc16" value="d"> d) /ˈwɔːntəd/</label></div></div>
-                <div class="question"><p>17. For two‑syllable words that can be both nouns and verbs (e.g. <i>record</i>), the general stress pattern is</p><div class="options"><label><input type="radio" name="mc17" value="a"> a) both stress the first syllable</label><label><input type="radio" name="mc17" value="b"> b) both stress the second syllable</label><label><input type="radio" name="mc17" value="c"> c) nouns stress the first syllable, verbs stress the second</label><label><input type="radio" name="mc17" value="d"> d) stress is random</label></div></div>
-                <div class="question"><p>18. In English sentence stress, which word class is <b>typically unstressed</b>?</p><div class="options"><label><input type="radio" name="mc18" value="a"> a) nouns</label><label><input type="radio" name="mc18" value="b"> b) main verbs</label><label><input type="radio" name="mc18" value="c"> c) adjectives</label><label><input type="radio" name="mc18" value="d"> d) function words (pronouns, prepositions, articles)</label></div></div>
-                <div class="question"><p>19. What is the difference between linking /r/ and intrusive /r/?</p><div class="options"><label><input type="radio" name="mc19" value="a"> a) Linking /r/ occurs only in American English, intrusive /r/ only in British English</label><label><input type="radio" name="mc19" value="b"> b) Linking /r/ appears where the spelling has an 'r', intrusive /r/ appears where there is no 'r' in the spelling</label><label><input type="radio" name="mc19" value="c"> c) They are the same phenomenon</label><label><input type="radio" name="mc19" value="d"> d) Linking /r/ is inserted after consonants, intrusive /r/ after vowels</label></div></div>
-                <div class="question"><p>20. Why is the <b>n</b> silent in <i>autumn</i>?</p><div class="options"><label><input type="radio" name="mc20" value="a"> a) It was never pronounced in Latin</label><label><input type="radio" name="mc20" value="b"> b) It is part of the final <i>-mn</i> pattern; the /n/ was historically lost</label><label><input type="radio" name="mc20" value="c"> c) The <b>n</b> is always silent before <b>m</b></label><label><input type="radio" name="mc20" value="d"> d) It represents a French spelling only</label></div></div>
-            </div>
-
-            <!-- SECTION 2: Fill in the Blanks -->
-            <div class="section fill-section"><h2>✍️ Section 2 · Fill in the Blanks (10 points)</h2>
-                <div class="question"><p>1. <b>c</b> before e, i, y is usually pronounced as ________ <button type="button" class="phoneme-toggle-btn" onclick="togglePalette()">Phonemic Symbols</button></p><div class="fill-blank"><input type="text" name="fb1"></div></div>
-                <div class="question"><p>2. <b>g</b> in <i>gesture</i> is a ________ g (soft/hard)</p><div class="fill-blank"><input type="text" name="fb2"></div></div>
-                <div class="question"><p>3. In <i>thumb</i>, the letter ________ is silent.</p><div class="fill-blank"><input type="text" name="fb3"></div></div>
-                <div class="question"><p>4. TRAP vowel /æ/ is almost always written with letter ________</p><div class="fill-blank"><input type="text" name="fb4"></div></div>
-                <div class="question"><p>5. FOOT vowel /ʊ/ word with 'oo' (example) ________</p><div class="fill-blank"><input type="text" name="fb5"></div></div>
-                <div class="question"><p>6. Concrete realisations of a phoneme are called ________</p><div class="fill-blank"><input type="text" name="fb6"></div></div>
-                <div class="question"><p>7. Obligatory vowel element in a syllable: ________</p><div class="fill-blank"><input type="text" name="fb7"></div></div>
-                <div class="question"><p>8. Deletion of a sound in connected speech: ________</p><div class="fill-blank"><input type="text" name="fb8"></div></div>
-                <div class="question"><p>9. /r/ inserted without an r in spelling: ________ r</p><div class="fill-blank"><input type="text" name="fb9"></div></div>
-                <div class="question"><p>10. Nouns, main verbs, adjectives, adverbs are ________ words</p><div class="fill-blank"><input type="text" name="fb10"></div></div>
-            </div>
-
-            <!-- SECTION 3: Matching -->
-            <div class="section"><h2>🔗 Section 3 · Matching (10 points)</h2>
-                <div class="matching-reference">
-                    <div><strong>A.</strong> <i>bottle</i> /ˈbɒtl̩/ – /l/ acts as the nucleus</div>
-                    <div><strong>B.</strong> <i>sooner or later</i> → /ˈsuːnər ə ˈleɪtə/</div>
-                    <div><strong>C.</strong> Clear [l] and dark [ɫ] occur in different phonetic environments</div>
-                    <div><strong>D.</strong> <i>knee</i> – Old English /k/ disappeared, spelling remained</div>
-                    <div><strong>E.</strong> <i>cease</i> contains the sound /s/</div>
-                    <div><strong>F.</strong> /m/ and /n/ before /f/ are both realised as [ɱ]</div>
-                    <div><strong>G.</strong> <i>apple tree</i> – stress falls on <i>apple</i></div>
-                    <div><strong>H.</strong> English speech where stressed syllables are roughly equally spaced in time</div>
-                    <div><strong>I.</strong> <i>bath</i> (noun) – the <b>th</b> is /θ/</div>
-                    <div><strong>J.</strong> In <i>Britain</i>, /t/ can be [t] or [ʔ] without changing meaning</div>
-                </div>
-                <div class="matching-row"><span>1. Soft <b>c</b></span> <select name="match1"><option value="">--</option><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option><option>F</option><option>G</option><option>H</option><option>I</option><option>J</option></select></div>
-                <div class="matching-row"><span>2. Voiceless <b>TH</b></span> <select name="match2"><option value="">--</option><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option><option>F</option><option>G</option><option>H</option><option>I</option><option>J</option></select></div>
-                <div class="matching-row"><span>3. Complementary distribution</span> <select name="match3"><option value="">--</option><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option><option>F</option><option>G</option><option>H</option><option>I</option><option>J</option></select></div>
-                <div class="matching-row"><span>4. Free variation</span> <select name="match4"><option value="">--</option><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option><option>F</option><option>G</option><option>H</option><option>I</option><option>J</option></select></div>
-                <div class="matching-row"><span>5. Neutralisation</span> <select name="match5"><option value="">--</option><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option><option>F</option><option>G</option><option>H</option><option>I</option><option>J</option></select></div>
-                <div class="matching-row"><span>6. Linking /r/</span> <select name="match6"><option value="">--</option><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option><option>F</option><option>G</option><option>H</option><option>I</option><option>J</option></select></div>
-                <div class="matching-row"><span>7. Historical elision</span> <select name="match7"><option value="">--</option><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option><option>F</option><option>G</option><option>H</option><option>I</option><option>J</option></select></div>
-                <div class="matching-row"><span>8. Initial Element Stress (IES)</span> <select name="match8"><option value="">--</option><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option><option>F</option><option>G</option><option>H</option><option>I</option><option>J</option></select></div>
-                <div class="matching-row"><span>9. Stress‑timed rhythm</span> <select name="match9"><option value="">--</option><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option><option>F</option><option>G</option><option>H</option><option>I</option><option>J</option></select></div>
-                <div class="matching-row"><span>10. Syllabic consonant</span> <select name="match10"><option value="">--</option><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option><option>F</option><option>G</option><option>H</option><option>I</option><option>J</option></select></div>
-            </div>
-
-            <!-- SECTION 4: Practical -->
-            <div class="section" id="practicalSection"><h2>🧪 Section 4 · Practical Application (10 points)</h2>
-                <p><b>A. Phonemic Transcription (2 pts)</b> – transcribe <i>castle</i> in GB English. <button type="button" class="phoneme-toggle-btn" onclick="togglePalette()">Phonemic Symbols</button></p>
-                <div class="transcribe-input"><input type="text" name="transcribe"></div>
-
-                <p style="margin-top:1rem;"><b>B. Word Stress (3 pts)</b> – <strong>choose</strong> the stressed syllable.</p>
-                <div class="stress-row"><span>1. computer</span> <label><input type="radio" name="stress1" value="com"> com</label><label><input type="radio" name="stress1" value="pu"> pu</label><label><input type="radio" name="stress1" value="ter"> ter</label></div>
-                <div class="stress-row"><span>2. photograph</span> <label><input type="radio" name="stress2" value="pho"> pho</label><label><input type="radio" name="stress2" value="to"> to</label><label><input type="radio" name="stress2" value="graph"> graph</label></div>
-                <div class="stress-row"><span>3. Japan</span> <label><input type="radio" name="stress3" value="Ja"> Ja</label><label><input type="radio" name="stress3" value="pan"> pan</label></div>
-
-                <p style="margin-top:1rem;"><b>C. Connected Speech (3 pts)</b> – <i>"He must be tired"</i> in casual speech.</p>
-                <ol style="margin-left:1.5rem;">
-                    <li>Connected speech form: <input type="text" name="connected" style="margin-bottom:0.5rem; width:80%;"> <button type="button" class="phoneme-toggle-btn" onclick="togglePalette()">Phonemic Symbols</button></li>
-                    <li>Elision (what is deleted?): <input type="text" name="elisionDesc" style="margin-bottom:0.5rem; width:80%;"></li>
-                    <li>Assimilation or weak form: <input type="text" name="assimDesc" style="width:80%;"></li>
-                </ol>
-
-                <p style="margin-top:1rem;"><b>D. Sentence Stress (2 pts)</b> – <strong>choose</strong> the stressed words: <i>I'm going to the shops to buy some bread.</i></p>
-                <div class="checkbox-group">
-                    <label><input type="checkbox" name="stressWord" value="going"> going</label>
-                    <label><input type="checkbox" name="stressWord" value="shops"> shops</label>
-                    <label><input type="checkbox" name="stressWord" value="buy"> buy</label>
-                    <label><input type="checkbox" name="stressWord" value="bread"> bread</label>
-                    <label><input type="checkbox" name="stressWord" value="I'm"> I'm</label>
-                    <label><input type="checkbox" name="stressWord" value="to"> to</label>
-                    <label><input type="checkbox" name="stressWord" value="the"> the</label>
-                    <label><input type="checkbox" name="stressWord" value="some"> some</label>
-                </div>
-            </div>
-
-            <!-- SECTION 5: True/False -->
-            <div class="section tf-section"><h2>✅ Section 5 · True or False (10 points)</h2>
-                <div class="question"><p>1. <b>c</b> in <i>cat</i> is a soft c.</p><div class="tf-options"><label><input type="radio" name="tf1" value="T"> True</label><label><input type="radio" name="tf1" value="F"> False</label></div></div>
-                <div class="question"><p>2. <b>gh</b> in <i>ghost</i> is silent.</p><div class="tf-options"><label><input type="radio" name="tf2" value="T"> True</label><label><input type="radio" name="tf2" value="F"> False</label></div></div>
-                <div class="question"><p>3. <b>oo</b> in <i>book</i> = FOOT /ʊ/.</p><div class="tf-options"><label><input type="radio" name="tf3" value="T"> True</label><label><input type="radio" name="tf3" value="F"> False</label></div></div>
-                <div class="question"><p>4. Allophones are abstract mental units.</p><div class="tf-options"><label><input type="radio" name="tf4" value="T"> True</label><label><input type="radio" name="tf4" value="F"> False</label></div></div>
-                <div class="question"><p>5. <i>want to</i> → /ˈwɒnə/ in casual speech.</p><div class="tf-options"><label><input type="radio" name="tf5" value="T"> True</label><label><input type="radio" name="tf5" value="F"> False</label></div></div>
-                <div class="question"><p>6. <b>ch</b> in <i>chef</i> = /ʃ/.</p><div class="tf-options"><label><input type="radio" name="tf6" value="T"> True</label><label><input type="radio" name="tf6" value="F"> False</label></div></div>
-                <div class="question"><p>7. Function words normally stressed.</p><div class="tf-options"><label><input type="radio" name="tf7" value="T"> True</label><label><input type="radio" name="tf7" value="F"> False</label></div></div>
-                <div class="question"><p>8. <i>present</i> (noun) stressed on 1st syllable.</p><div class="tf-options"><label><input type="radio" name="tf8" value="T"> True</label><label><input type="radio" name="tf8" value="F"> False</label></div></div>
-                <div class="question"><p>9. A syllable must contain a vowel letter.</p><div class="tf-options"><label><input type="radio" name="tf9" value="T"> True</label><label><input type="radio" name="tf9" value="F"> False</label></div></div>
-                <div class="question"><p>10. TRAP /æ/ almost always spelled <b>a</b>.</p><div class="tf-options"><label><input type="radio" name="tf10" value="T"> True</label><label><input type="radio" name="tf10" value="F"> False</label></div></div>
-            </div>
-        </form>
-        <button class="btn" id="submitBtn">✅ Submit Test</button>
-    </div>
+<!-- Cheating detection overlay -->
+<div id="cheat-overlay">
+  <div class="cheat-icon">⚠️</div>
+  <h2 style="font-family:'Space Grotesk',sans-serif; font-size:1.6rem;">Focus on your work!</h2>
+  <p style="color:var(--muted); max-width:380px;">You switched tabs or minimized the window. This has been recorded.</p>
+  <div class="cheat-count-badge" id="cheat-count-badge">Violation #1</div>
+  <p style="font-size:0.85rem; color:var(--muted);">Click below to return to your assessment.</p>
+  <button class="btn-submit" onclick="dismissCheat()" style="padding:0.7rem 2rem;">Return to Assessment</button>
 </div>
 
-<!-- Phonemic symbol palette -->
-<div class="symbol-palette" id="symbolPalette">
-    <button onclick="insertSymbol('ə')">ə</button><button onclick="insertSymbol('æ')">æ</button>
-    <button onclick="insertSymbol('ɒ')">ɒ</button><button onclick="insertSymbol('ɑː')">ɑː</button>
-    <button onclick="insertSymbol('ɔː')">ɔː</button><button onclick="insertSymbol('ʊ')">ʊ</button>
-    <button onclick="insertSymbol('uː')">uː</button><button onclick="insertSymbol('ʌ')">ʌ</button>
-    <button onclick="insertSymbol('iː')">iː</button><button onclick="insertSymbol('ɪ')">ɪ</button>
-    <button onclick="insertSymbol('e')">e</button><button onclick="insertSymbol('θ')">θ</button>
-    <button onclick="insertSymbol('ð')">ð</button><button onclick="insertSymbol('ʃ')">ʃ</button>
-    <button onclick="insertSymbol('ʒ')">ʒ</button><button onclick="insertSymbol('ŋ')">ŋ</button>
-    <button onclick="insertSymbol('j')">j</button><button onclick="insertSymbol('w')">w</button>
-    <button onclick="insertSymbol('ˈ')">ˈ</button><button onclick="insertSymbol('ˌ')">ˌ</button>
-    <button onclick="insertSymbol('ː')">ː</button><button onclick="insertSymbol('/')">/</button>
+<!-- Tab-switch overlay -->
+<div id="overlay" class="overlay">
 </div>
 
-<!-- Confirm submit modal -->
-<div class="modal" id="confirmModal">
-    <div class="modal-content">
-        <p><strong>Are you sure you want to submit?</strong></p>
-        <button class="btn" id="yesBtn">✅ Yes, submit final</button>
-        <button class="btn" id="noBtn" style="background:#64748b;">❌ No, go back</button>
+<!-- Landing page -->
+<div id="landing">
+  <div class="logo-anim">ELLE 2208 ✦</div>
+  <div style="text-align:center; color:var(--muted); font-size:0.9rem;">Foundation of Academic Writing — Meeting 5</div>
+  <div class="landing-card">
+    <h2>📚 Pre-Lesson Task</h2>
+    <p style="font-size:0.85rem; color:var(--muted); margin-bottom:1.5rem;">Process Paragraphs — Part A &amp; Part B<br>Estimated time: 20–25 minutes</p>
+    <div class="field-group">
+      <label>Full Name</label>
+      <input type="text" id="input-name" placeholder="Enter your full name" autocomplete="off">
     </div>
+    <div class="field-group">
+      <label>Student ID</label>
+      <input type="text" id="input-id" placeholder="Enter your student ID" autocomplete="off">
+    </div>
+    <button class="btn-start" onclick="startAssessment()">Start Assessment →</button>
+  </div>
 </div>
 
-<!-- Unanswered questions notification modal (non‑blurring) -->
-<div class="unanswered-modal" id="unansweredModal">
-    <div class="unanswered-content">
-        <h3 style="color:#b91c1c;">⚠️ Incomplete Answers</h3>
-        <p id="unansweredMessage" style="margin:1rem 0; font-weight:500;"></p>
-        <button class="btn" onclick="document.getElementById('unansweredModal').style.display='none'" style="background:#b91c1c;">OK, I'll fill them in</button>
+<!-- Main assessment -->
+<div id="app">
+  <div class="header-bar">
+    <div class="header-info">
+      <div class="header-title">Pre-Lesson Task — Process Paragraphs</div>
+      <div class="header-sub">ELLE 2208 · Meeting 5 · Part A &amp; B</div>
     </div>
+    <div class="student-badge" id="student-badge">Student</div>
+    <div class="timer-box" id="timer">25:00</div>
+  </div>
+
+  <div class="warn-banner" id="warn-banner">⚠️ Please answer all questions before submitting.</div>
+
+  <!-- Part A -->
+  <div class="section-card">
+    <div class="section-header">
+      <span class="section-badge">Part A</span>
+      <span class="section-title">Vocabulary Activation — Sequence Signals (10 min)</span>
+    </div>
+    <p style="font-size:0.88rem; color:var(--muted); margin-bottom:1rem;">Drag each signal into the correct category. You may use a dictionary.</p>
+    <div class="signal-box">
+      <strong style="width:100%; font-size:0.8rem; color:var(--muted); margin-bottom:0.3rem;">Signal Bank:</strong>
+    </div>
+    <div id="chips-source" class="chips-source"></div>
+    <table class="cat-table">
+      <thead>
+        <tr>
+          <th>🚀 Starting a Process</th>
+          <th>⚙️ Continuing / Middle Steps</th>
+          <th>🏁 Ending a Process</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><div class="drop-zone" id="zone-start" ondragover="allowDrop(event)" ondrop="dropChip(event,'start')" onclick="selectZone(this,'start')"></div></td>
+          <td><div class="drop-zone" id="zone-mid" ondragover="allowDrop(event)" ondrop="dropChip(event,'mid')" onclick="selectZone(this,'mid')"></div></td>
+          <td><div class="drop-zone" id="zone-end" ondragover="allowDrop(event)" ondrop="dropChip(event,'end')" onclick="selectZone(this,'end')"></div></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Part B -->
+  <div class="section-card">
+    <div class="section-header">
+      <span class="section-badge">Part B</span>
+      <span class="section-title">Model Paragraph Analysis (10–15 min)</span>
+    </div>
+    <p style="font-size:0.85rem; color:var(--muted); margin-bottom:0.8rem;">Read the model paragraph below carefully, then answer the four analysis questions.</p>
+    <div class="model-box">
+      <strong>MODEL PARAGRAPH — How to Brew a Perfect Cup of Pour-Over Coffee</strong>
+      Brewing a well-balanced cup of pour-over coffee requires attention to sequence and timing. <em>First</em>, measure 25 grams of medium-coarse ground coffee and place it in the filter inside the dripper. <em>Next</em>, bring filtered water to approximately 93°C — just below boiling — using a gooseneck kettle. <em>Once</em> the water reaches the right temperature, pour a small amount (about 50 ml) over the grounds in a slow, circular motion to let the coffee bloom for 30 seconds. This step releases carbon dioxide and improves extraction. <em>After the bloom</em>, continue pouring the remaining water in four or five controlled pulses, each time waiting for the water level to drop before adding more. <em>As soon as</em> the last pour drains through, remove the dripper. <em>Finally</em>, gently swirl the cup and allow the coffee to cool for one minute before drinking. Following these steps consistently will produce a clear, aromatic cup every time.
+    </div>
+
+    <div class="question-block">
+      <div class="q-label"><span class="qnum">1</span>What is the topic sentence? Underline it in the paragraph (mentally) and rewrite it below. What promise does it make to the reader? (1–3 sentences)</div>
+      <textarea id="b1" placeholder="Type your answer here..."></textarea>
+    </div>
+
+    <div class="question-block">
+      <div class="q-label"><span class="qnum">2</span>List at least five sequence signals the writer uses. Beside each signal, write the function it performs (Starting / Continuing / Ending).</div>
+      <textarea id="b2" placeholder="e.g. 'First' – Starting; 'Once' – Continuing; ..."></textarea>
+    </div>
+
+    <div class="question-block">
+      <div class="q-label"><span class="qnum">3</span>Find one step where the writer includes an explanation of WHY the step is done, not just WHAT to do. What effect does this explanation have? (1–3 sentences)</div>
+      <textarea id="b3" placeholder="Type your answer here..."></textarea>
+    </div>
+
+    <div class="question-block">
+      <div class="q-label"><span class="qnum">4</span>Identify ONE key difference between a process paragraph and a listing-order paragraph based on this model. (1–3 sentences)</div>
+      <textarea id="b4" placeholder="Type your answer here..."></textarea>
+    </div>
+  </div>
+
+  <div class="submit-area">
+    <button class="btn-submit" onclick="attemptSubmit()">Submit</button>
+  </div>
 </div>
 
 <!-- Results page -->
-<div class="container results-page" id="resultsPage">
-    <h2>🎓 Test Completed</h2>
-    <p>Your score: <span class="score-highlight" id="finalScoreSpan"></span> / 100</p>
-    <p id="endReasonMessage" style="color:red; font-weight:bold; display:none;"></p>
-    <div id="corrections"></div>
-    <div style="text-align:center; margin-top:2rem;">
-        <button class="btn" onclick="window.print()" id="printBtn">🖨️ Download PDF</button>
-        <p style="font-size:0.9rem; margin-top:0.5rem; color:#64748b;">Click the button, then choose “Save as PDF” in the print dialog.</p>
+<div id="results">
+  <div class="results-header">
+    <h1>Assessment Complete ✦</h1>
+    <p style="color:var(--muted); font-size:0.9rem;" id="results-meta"></p>
+    <div class="score-circle" id="score-circle">
+      <span id="score-pct">—</span>
     </div>
+    <p style="color:var(--muted); font-size:0.85rem;" id="score-label"></p>
+  </div>
+  <div id="results-body"></div>
+</div>
+
+<!-- Confirm modal -->
+<div class="modal-overlay" id="confirm-modal">
+  <div class="modal-card">
+    <div style="font-size:2.5rem; margin-bottom:0.5rem;">📤</div>
+    <h3>Submit your answers?</h3>
+    <p>Once submitted, you cannot make changes. Make sure you have answered all questions.</p>
+    <div class="modal-btns">
+      <button class="btn-yes" onclick="confirmSubmit()">Yes</button>
+      <button class="btn-no" onclick="closeModal()">No</button>
+    </div>
+  </div>
 </div>
 
 <script>
-(function() {
-    const GOOGLE_SHEET_URL = 'https://script.google.com/macros/s/AKfycbzLdLsxhyiOwb6H62GP1ac_CnKpJtBMKUWyPE6O_BHK8ujVBQLht3BDmsE2s6bICxNYEg/exec';
-
-    // TOLERANT GRADING DATA (unchanged)
-    const fillBlankDisplay = {
-        1: "/s/, s, the /s/ sound, /s/ (voiceless alveolar fricative), s sound",
-        2: "soft, soft g, a soft g, soft 'g'",
-        3: "b, letter b, the letter b, b (silent)",
-        4: "a, letter a, the letter a, a (grapheme)",
-        5: "book, good, foot, look, cook, took, hook, shook, wool, wood",
-        6: "allophones, allophone, allophonic variants",
-        7: "nucleus, syllable nucleus, the nucleus, peak",
-        8: "elision, deletion, sound deletion, omission, elision (deletion)",
-        9: "intrusive, intrusive r, intrusive /r/",
-        10: "content, content words, lexical, lexical words"
-    };
-    const connectedDisplay = ["/hi ˈmʌs bi ˈtaɪəd/", "/i ˈmʌs bi ˈtaɪəd/", "/hi ˈmʌsp bi ˈtaɪəd/", "/i ˈmʌsp bi ˈtaɪəd/", "(any variant with stressed /taɪəd/ or /taɪɚd/; rhotic accepted)"].join(" ; ");
-    const elisionDisplay = ["the /t/ in 'must' is deleted", "/t/ elision", "deletion of /t/", "must loses its /t/", "/t/ is dropped", "t‑deletion in must"].join(" ; ");
-    const assimDisplay = ["he → /i/ (weak form / h‑dropping)", "/h/ elision in he", "he is reduced to /i/", "weak form of he", "h‑dropping", "assimilation: /t/ → [p] before /b/", "/mʌsp bi/", "/t/ assimilates to /p/", "place assimilation → bilabial"].join(" ; ");
-
-    function normalizeAnswer(str) { return str.trim().toLowerCase().replace(/[\s\/\[\]\(\)]+/g, ' ').trim(); }
-    function gradeFillBlank(qNum, userAnswer) {
-        const ans = normalizeAnswer(userAnswer);
-        const rules = {
-            1: { full: ['s','/s/','the /s/ sound','/s/ voiceless alveolar fricative','s sound'], partial: [/^s\s?sound$/, /^s\s?is/, /^c$/] },
-            2: { full: ['soft','soft g','a soft g','soft \'g\''], partial: [/^sof/, /^sft/] },
-            3: { full: ['b','letter b','the letter b','b silent','b (silent)'], partial: [/^v$/] },
-            4: { full: ['a','letter a','the letter a','a grapheme'], partial: [/^a vowel$/] },
-            5: { full: ['book','good','foot','look','cook','took','hook','shook','wool','wood'], partial: [/food/, /moon/] },
-            6: { full: ['allophones','allophone','allophonic variants'], partial: [/alophones/, /allofones/, /allaphones/] },
-            7: { full: ['nucleus','syllable nucleus','the nucleus','peak'], partial: [/nucelus/, /core/] },
-            8: { full: ['elision','deletion','sound deletion','omission','elision (deletion)'], partial: [/elition/, /elisson/, /elide/] },
-            9: { full: ['intrusive','intrusive r','intrusive /r/'], partial: [/intrusiv/, /intrusive r/] },
-            10:{ full: ['content','content words','lexical','lexical words'], partial: [/contant/, /lexical/] }
-        };
-        const rule = rules[qNum];
-        if (!rule) return 0;
-        for (let f of rule.full) { if (normalizeAnswer(f) === ans) return 1; }
-        for (let regex of rule.partial) { if (regex.test(ans)) return 0.5; }
-        return 0;
-    }
-
-    function gradeTranscription(value) {
-        let raw = value.trim().toLowerCase().replace(/[\/\[\]\sˈˌ()]/g, '').replace(/[ː:]/g, 'ː').replace(/[l̩]/g, 'l');
-        if (raw.includes('t')) return 0;
-        return /k(ɑː?|æ)s(ə)?l/.test(raw) ? 2 : 1;
-    }
-
-    function gradeConnectedSpeech(value) {
-        let input = value.trim().toLowerCase().replace(/[\/\[\]\sˈˌ()]/g, '').replace(/[ː:]/g, 'ː');
-        const hasReducedHe = /^(hi|i)/.test(input);
-        const hasMustReduced = /mʌs(p)?/.test(input) && !input.includes('t');
-        if (hasReducedHe && hasMustReduced) return 1;
-        if (hasReducedHe || hasMustReduced) return 0.5;
-        return 0;
-    }
-
-    function gradeElisionDesc(value) {
-        const ans = value.trim().toLowerCase();
-        if (/t.*must|must.*t.*(deleted|elided|dropped|loses)/i.test(ans) || /\/t\/ elision/.test(ans) || /t.?deletion in must/.test(ans)) return 1;
-        if (/consonant.*must.*(deleted|dropped)/.test(ans) || /sound deletion.*must/.test(ans)) return 0.5;
-        return 0;
-    }
-
-    function gradeAssimilationDesc(value) {
-        const ans = value.trim().toLowerCase();
-        if (/weak form.*he|he.*weak|h.?dropping|he.*\/i\/|he.*reduced.*\/i\//.test(ans)) return 1;
-        if (/assimilation.*p.*b|place assimilation.*bilabial|mʌsp/.test(ans)) return 1;
-        if (/he\s*→\s*\/i\//.test(ans)) return 1;
-        if (/he.*weak/.test(ans) || /must.*before.*b/.test(ans)) return 0.5;
-        return 0;
-    }
-
-    function gradeSentenceStress() {
-        const checked = Array.from(document.querySelectorAll('input[name="stressWord"]:checked')).map(cb => cb.value);
-        const cs = new Set(['going','shops','buy','bread']), ws = new Set(["I'm",'to','the','some']);
-        let c=0,w=0; checked.forEach(v=>{if(cs.has(v))c++; if(ws.has(v))w++;});
-        if(c===4&&w===0) return 2; if(c===3&&w===0) return 1.5; if(c===4&&w===1) return 1;
-        if(c===2&&w===0) return 1; if(c===2&&w===1) return 0.5; if(c===3&&w===1) return 0.5; return 0;
-    }
-
-    const correctMC = ['b','c','b','a','b','c','b','b','b','b','b','c','a','b','b','b','c','d','b','b'];
-    const correctMatch = ['E','I','C','J','F','B','D','G','H','A'];
-    const correctStress = {stress1:'pu', stress2:'pho', stress3:'pan'};
-    const correctTF = ['F','F','T','F','T','T','F','T','F','T'];
-    const TOTAL_RAW = 60;
-    let timerInterval, secondsLeft=7200, testStarted=false, lastFocusedInput=null, testEndReason=null;
-
-    // Phonemic palette toggle
-    window.togglePalette = function() { document.getElementById('symbolPalette').classList.toggle('show'); };
-    window.insertSymbol = function(sym) {
-        if (!lastFocusedInput) return;
-        const start = lastFocusedInput.selectionStart;
-        const end = lastFocusedInput.selectionEnd;
-        const text = lastFocusedInput.value;
-        lastFocusedInput.value = text.slice(0, start) + sym + text.slice(end);
-        lastFocusedInput.focus();
-    };
-    document.addEventListener('focusin', (e) => { if (e.target.matches('input[type="text"], textarea')) lastFocusedInput = e.target; });
-
-    // ANTI‑CHEAT: Full‑screen, lockout (unchanged)
-    function getLockKey() { return `testlock_${document.getElementById('studentName').value.trim()}_${document.getElementById('studentID').value.trim()}`; }
-    function isLockedOut() {
-        const key = getLockKey(); const lockTime = localStorage.getItem(key);
-        if (!lockTime) return false; return (Date.now() - Number(lockTime)) < 60000;
-    }
-    function setLock() { localStorage.setItem(getLockKey(), Date.now()); }
-
-    function triggerTestEnd(reason) {
-        if (!testStarted) return;
-        testEndReason = reason;
-        setLock();
-        alert(`The test has been ended because you ${reason}.`);
-        submitTest();
-    }
-
-    function handleFullscreenChange() {
-        if (!testStarted) return;
-        if (!document.fullscreenElement && !document.webkitFullscreenElement) {
-            triggerTestEnd('exited full‑screen mode');
-        }
-    }
-    document.addEventListener('fullscreenchange', handleFullscreenChange);
-    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
-
-    document.addEventListener('visibilitychange', () => { if (!testStarted) return; if (document.hidden) triggerTestEnd('switched tabs or minimized the window'); });
-    window.addEventListener('blur', () => { if (!testStarted) return; triggerTestEnd('switched focus to another window'); });
-    document.addEventListener('keydown', (e) => { if((e.ctrlKey||e.metaKey)&&e.key==='t') { e.preventDefault(); alert('Opening a new tab is not allowed.'); } });
-
-    // Start button
-    document.getElementById('startBtn').addEventListener('click', () => {
-        if (isLockedOut()) {
-            const remaining = Math.ceil((60000 - (Date.now() - Number(localStorage.getItem(getLockKey())))) / 1000);
-            alert(`You are temporarily locked out for leaving the test page. Please wait ${remaining} seconds and try again.`);
-            return;
-        }
-        if (!document.getElementById('studentName').value.trim() || !document.getElementById('studentID').value.trim()) {
-            alert('Please enter your name and ID.'); return;
-        }
-        // Request full‑screen
-        const el = document.documentElement;
-        if (el.requestFullscreen) el.requestFullscreen();
-        else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
-
-        document.getElementById('studentPage').style.display = 'none';
-        document.getElementById('testContent').style.display = 'block';
-        testStarted = true;
-        startTimer();
-        shuffleAllSections();
-    });
-
-    function startTimer() {
-        timerInterval = setInterval(() => {
-            secondsLeft--;
-            const h = Math.floor(secondsLeft/3600), m = Math.floor((secondsLeft%3600)/60), s = secondsLeft%60;
-            document.getElementById('timerDisplay').textContent = `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
-            if (secondsLeft <= 0) { clearInterval(timerInterval); alert('Time is up! Submitting automatically.'); submitTest(); }
-        }, 1000);
-    }
-    function shuffleArray(arr) { for (let i=arr.length-1; i>0; i--) { const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } }
-    function renumberSection(section) {
-        const questions = section.querySelectorAll('.question');
-        questions.forEach((q, idx) => { const p = q.querySelector('p'); if(p) p.innerHTML = p.innerHTML.replace(/^\d+\./, (idx+1)+'.'); });
-        const matchRows = section.querySelectorAll('.matching-row');
-        matchRows.forEach((row, idx) => { const span = row.querySelector('span'); if(span) { const desc = span.textContent.replace(/^\d+\.\s*/, ''); span.textContent = (idx+1)+'. '+desc; } });
-    }
-    function shuffleAllSections() {
-        const sections = document.querySelectorAll('.section');
-        sections.forEach(sec => { if(sec.id==='practicalSection') return; const items=Array.from(sec.querySelectorAll('.question, .matching-row, .stress-row')); if(items.length>0) { const parent=items[0].parentNode; shuffleArray(items); items.forEach(el=>parent.appendChild(el)); renumberSection(sec); } });
-    }
-
-    window.addEventListener('beforeunload', (e) => { if(testStarted&&secondsLeft>0) { e.preventDefault(); e.returnValue=''; } });
-
-    // Custom non‑blurring alert for unanswered questions
-    function showUnansweredAlert(message) {
-        document.getElementById('unansweredMessage').textContent = message;
-        document.getElementById('unansweredModal').style.display = 'flex';
-    }
-
-    // Check unanswered and use custom modal instead of alert
-    function checkAllAnswered() {
-        const u=[];
-        for(let i=1;i<=20;i++) if(!document.querySelector(`input[name="mc${i}"]:checked`)) u.push(`MC ${i}`);
-        for(let i=1;i<=10;i++) if(!document.querySelector(`input[name="fb${i}"]`)?.value.trim()) u.push(`Fill ${i}`);
-        for(let i=1;i<=10;i++) if(!document.querySelector(`select[name="match${i}"]`)?.value) u.push(`Match ${i}`);
-        for(let i=1;i<=10;i++) if(!document.querySelector(`input[name="tf${i}"]:checked`)) u.push(`T/F ${i}`);
-        if(!document.querySelector('input[name="transcribe"]')?.value.trim()) u.push('Transcription');
-        ['stress1','stress2','stress3'].forEach((n,i)=>{ if(!document.querySelector(`input[name="${n}"]:checked`)) u.push(`Word stress ${i+1}`); });
-        if(!document.querySelector('input[name="connected"]')?.value.trim()) u.push('Connected speech');
-        if(!document.querySelector('input[name="elisionDesc"]')?.value.trim()) u.push('Elision');
-        if(!document.querySelector('input[name="assimDesc"]')?.value.trim()) u.push('Assimilation');
-        if(document.querySelectorAll('input[name="stressWord"]:checked').length===0) u.push('Sentence stress');
-        return u;
-    }
-
-    document.getElementById('submitBtn').addEventListener('click', () => {
-        const unanswered = checkAllAnswered();
-        if (unanswered.length) {
-            showUnansweredAlert(`You haven't answered the following:\n${unanswered.join('\n')}`);
-            return;
-        }
-        document.getElementById('confirmModal').style.display = 'flex';
-    });
-
-    document.getElementById('noBtn').onclick = () => document.getElementById('confirmModal').style.display = 'none';
-    document.getElementById('yesBtn').onclick = () => {
-        document.getElementById('confirmModal').style.display = 'none';
-        submitTest();
-    };
-
-    function submitTest() {
-        clearInterval(timerInterval); testStarted=false;
-        let rawScore=0; const details=[];
-        for(let i=1;i<=20;i++){ const sel=document.querySelector(`input[name="mc${i}"]:checked`); const user=sel?sel.value:''; if(user===correctMC[i-1]) rawScore++; details.push({q:`MC ${i}`,user,correct:correctMC[i-1],ok:user===correctMC[i-1]}); }
-        for(let i=1;i<=10;i++){ const inp=document.querySelector(`input[name="fb${i}"]`); const user=inp?inp.value.trim():''; const score=gradeFillBlank(i,user); rawScore+=score; details.push({q:`Fill ${i}`,user,correct:fillBlankDisplay[i]||'see key',ok:score>=0.5}); }
-        for(let i=1;i<=10;i++){ const sel=document.querySelector(`select[name="match${i}"]`); const user=sel?sel.value:''; if(user===correctMatch[i-1]) rawScore++; details.push({q:`Match ${i}`,user,correct:correctMatch[i-1],ok:user===correctMatch[i-1]}); }
-        for(let i=1;i<=10;i++){ const sel=document.querySelector(`input[name="tf${i}"]:checked`); const user=sel?sel.value:''; if(user===correctTF[i-1]) rawScore++; details.push({q:`T/F ${i}`,user,correct:correctTF[i-1],ok:user===correctTF[i-1]}); }
-
-        const transVal=document.querySelector('input[name="transcribe"]')?.value||''; const transScore=gradeTranscription(transVal); rawScore+=transScore; details.push({q:'Transcription',user:transVal,correct:'/ˈkɑːsəl/ or /ˈkæsəl/ (no /t/)',ok:transScore===2});
-        ['stress1','stress2','stress3'].forEach(name=>{ const sel=document.querySelector(`input[name="${name}"]:checked`); const user=sel?sel.value:''; if(user===correctStress[name]) rawScore++; details.push({q:`Stress ${name}`,user,correct:correctStress[name],ok:user===correctStress[name]}); });
-
-        const connScore=gradeConnectedSpeech(document.querySelector('input[name="connected"]')?.value||''); rawScore+=connScore; details.push({q:'Connected speech',user:document.querySelector('input[name="connected"]')?.value,correct:connectedDisplay,ok:connScore===1});
-        const elScore=gradeElisionDesc(document.querySelector('input[name="elisionDesc"]')?.value||''); rawScore+=elScore; details.push({q:'Elision desc',user:document.querySelector('input[name="elisionDesc"]')?.value,correct:elisionDisplay,ok:elScore===1});
-        const assScore=gradeAssimilationDesc(document.querySelector('input[name="assimDesc"]')?.value||''); rawScore+=assScore; details.push({q:'Assim/weak',user:document.querySelector('input[name="assimDesc"]')?.value,correct:assimDisplay,ok:assScore===1});
-        const sentScore=gradeSentenceStress(); rawScore+=sentScore; details.push({q:'Sentence stress',user:Array.from(document.querySelectorAll('input[name="stressWord"]:checked')).map(cb=>cb.value).join(', '),correct:'going, shops, buy, bread',ok:sentScore===2});
-
-        const finalScore=Math.round((rawScore/TOTAL_RAW)*100);
-        document.getElementById('finalScoreSpan').textContent=finalScore;
-        if(testEndReason){ document.getElementById('endReasonMessage').style.display='block'; document.getElementById('endReasonMessage').textContent=`⚠️ The test ended because you ${testEndReason}. Your score is recorded. You are locked out for 1 minute.`; }
-        let html='<table class="correction-table"><tr><th>Question</th><th>Your answer</th><th>Correct</th><th>✔/✘</th></tr>';
-        details.forEach(d=>{ html+=`<tr class="${d.ok?'correct-ans':'wrong-ans'}"><td>${d.q}</td><td>${d.user}</td><td>${d.correct}</td><td>${d.ok?'✔':'✘'}</td></tr>`; });
-        html+='</table>'; document.getElementById('corrections').innerHTML=html;
-        document.getElementById('mainContainer').style.display='none'; document.getElementById('resultsPage').style.display='block'; document.getElementById('symbolPalette').classList.remove('show');
-
-        if(GOOGLE_SHEET_URL!=='YOUR_GOOGLE_APPS_SCRIPT_URL_HERE'){ fetch(GOOGLE_SHEET_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:document.getElementById('studentName').value.trim(),id:document.getElementById('studentID').value.trim(),rawScore,finalScore,answers:details.map(d=>d.user).join('|')})}).catch(e=>console.log('Sheet error',e)); }
-        testEndReason=null;
-    }
+// Stars
+(function(){
+  const c = document.getElementById('stars');
+  for(let i=0;i<80;i++){
+    const s = document.createElement('div');
+    s.className = 'star';
+    s.style.left = Math.random()*100+'%';
+    s.style.top = Math.random()*100+'%';
+    s.style.setProperty('--d', (3+Math.random()*5)+'s');
+    s.style.setProperty('--delay', (Math.random()*6)+'s');
+    s.style.setProperty('--op', (0.3+Math.random()*0.7).toString());
+    c.appendChild(s);
+  }
 })();
+
+// === DATA ===
+const SIGNALS = ['first','then','next','after that','once','as soon as','while','subsequently','finally','last','at this point','in the meantime','before','immediately after'];
+const CORRECT_CATS = {
+  start: ['first','before','at this point'],
+  mid: ['then','next','after that','once','as soon as','while','subsequently','in the meantime','immediately after'],
+  end: ['finally','last']
+};
+
+let studentName = '', studentId = '';
+let timerInterval;
+let totalSeconds = 25 * 60;
+let cheatCount = 0;
+let selectedChip = null;
+let selectedZone = null;
+let chipLocations = {}; // chip -> 'source'|'start'|'mid'|'end'
+
+// Init chips
+SIGNALS.forEach(s => chipLocations[s] = 'source');
+
+function startAssessment(){
+  studentName = document.getElementById('input-name').value.trim();
+  studentId = document.getElementById('input-id').value.trim();
+  if(!studentName || !studentId){ alert('Please enter your name and student ID.'); return; }
+  document.getElementById('landing').style.display = 'none';
+  document.getElementById('app').classList.add('show');
+  document.getElementById('student-badge').innerHTML = `<strong>${studentName}</strong> · ${studentId}`;
+  renderChips();
+  startTimer();
+  setupAntiCheat();
+}
+
+function renderChips(){
+  const src = document.getElementById('chips-source');
+  src.innerHTML = '';
+  ['zone-start','zone-mid','zone-end'].forEach(z => document.getElementById(z).innerHTML = '');
+  SIGNALS.forEach(s => {
+    const zone = chipLocations[s];
+    const chip = makeChip(s);
+    if(zone === 'source') src.appendChild(chip);
+    else document.getElementById('zone-'+zone).appendChild(chip);
+  });
+}
+
+function makeChip(s){
+  const d = document.createElement('div');
+  d.className = 'draggable-chip';
+  d.textContent = s;
+  d.draggable = true;
+  d.dataset.signal = s;
+  d.addEventListener('dragstart', e => {
+    e.dataTransfer.setData('text/plain', s);
+    d.classList.add('dragging');
+  });
+  d.addEventListener('dragend', () => d.classList.remove('dragging'));
+  d.addEventListener('click', () => tapChip(d, s));
+  return d;
+}
+
+function allowDrop(e){ e.preventDefault(); e.currentTarget.classList.add('drag-over'); }
+document.querySelectorAll('.drop-zone').forEach(z => z.addEventListener('dragleave', () => z.classList.remove('drag-over')));
+
+function dropChip(e, zone){
+  e.preventDefault();
+  e.currentTarget.classList.remove('drag-over');
+  const s = e.dataTransfer.getData('text/plain');
+  chipLocations[s] = zone;
+  renderChips();
+}
+
+// Tap-to-move for mobile
+function tapChip(el, s){
+  if(selectedChip === s){ selectedChip=null; renderChips(); return; }
+  selectedChip = s;
+  // highlight
+  document.querySelectorAll('.draggable-chip').forEach(c => c.style.outline = '');
+  el.style.outline = '2px solid var(--accent)';
+}
+
+function selectZone(el, zone){
+  if(selectedChip){
+    chipLocations[selectedChip] = zone;
+    selectedChip = null;
+    renderChips();
+  }
+}
+
+// source zone click
+document.getElementById('chips-source').addEventListener('click', e => {
+  if(selectedChip && e.target === document.getElementById('chips-source')){
+    chipLocations[selectedChip] = 'source';
+    selectedChip = null;
+    renderChips();
+  }
+});
+
+// Timer
+function startTimer(){
+  const el = document.getElementById('timer');
+  timerInterval = setInterval(() => {
+    totalSeconds--;
+    const m = Math.floor(totalSeconds/60), s = totalSeconds%60;
+    el.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    el.className = 'timer-box';
+    if(totalSeconds <= 300) el.classList.add('warning');
+    if(totalSeconds <= 60) el.classList.add('danger');
+    if(totalSeconds <= 0){ clearInterval(timerInterval); autoSubmit(); }
+  }, 1000);
+}
+
+function autoSubmit(){
+  confirmSubmit();
+}
+
+// Anti-cheat
+function setupAntiCheat(){
+  document.addEventListener('visibilitychange', () => {
+    if(document.hidden && document.getElementById('app').classList.contains('show') && !document.getElementById('results').classList.contains('show')){
+      cheatCount++;
+      document.getElementById('cheat-count-badge').textContent = `Violation #${cheatCount}`;
+      document.getElementById('cheat-overlay').classList.add('show');
+    }
+  });
+  window.addEventListener('blur', () => {
+    if(document.getElementById('app').classList.contains('show') && !document.getElementById('results').classList.contains('show')){
+      cheatCount++;
+      document.getElementById('cheat-count-badge').textContent = `Violation #${cheatCount}`;
+      document.getElementById('cheat-overlay').classList.add('show');
+    }
+  });
+}
+
+function dismissCheat(){
+  document.getElementById('cheat-overlay').classList.remove('show');
+}
+
+// Submit flow
+function attemptSubmit(){
+  if(!allAnswered()){ document.getElementById('warn-banner').classList.add('show'); return; }
+  document.getElementById('warn-banner').classList.remove('show');
+  document.getElementById('confirm-modal').classList.add('show');
+}
+
+function closeModal(){ document.getElementById('confirm-modal').classList.remove('show'); }
+
+function allAnswered(){
+  const b1 = document.getElementById('b1').value.trim();
+  const b2 = document.getElementById('b2').value.trim();
+  const b3 = document.getElementById('b3').value.trim();
+  const b4 = document.getElementById('b4').value.trim();
+  // Check at least some chips placed
+  const chipsPlaced = Object.values(chipLocations).filter(v => v !== 'source').length;
+  return b1 && b2 && b3 && b4 && chipsPlaced >= 3;
+}
+
+function confirmSubmit(){
+  closeModal();
+  clearInterval(timerInterval);
+  const data = collectData();
+  submitToSheets(data);
+  showResults(data);
+}
+
+function collectData(){
+  const cats = {start:[], mid:[], end:[]};
+  SIGNALS.forEach(s => { if(chipLocations[s] !== 'source') cats[chipLocations[s]].push(s); });
+  return {
+    studentName, studentId,
+    timestamp: new Date().toISOString(),
+    cheatCount,
+    partA: cats,
+    partB: {
+      b1: document.getElementById('b1').value.trim(),
+      b2: document.getElementById('b2').value.trim(),
+      b3: document.getElementById('b3').value.trim(),
+      b4: document.getElementById('b4').value.trim(),
+    }
+  };
+}
+
+// Scoring
+function scorePartA(cats){
+  let correct = 0, total = SIGNALS.length;
+  SIGNALS.forEach(s => {
+    const placed = chipLocations[s];
+    if(placed === 'source') return;
+    if(CORRECT_CATS[placed] && CORRECT_CATS[placed].includes(s)) correct++;
+  });
+  return { correct, total, score: Math.round(correct/total*50) }; // 50 pts max
+}
+
+function scorePartB(ans){
+  const results = [];
+  const topics = [
+    { q:'Q1 – Topic Sentence', answer: ans.b1, keywords:['brewing','requires attention','sequence','timing','well-balanced','steps'], minWords:10 },
+    { q:'Q2 – Sequence Signals', answer: ans.b2, keywords:['first','next','once','after','as soon as','finally','while','starting','continuing','ending'], minWords:15 },
+    { q:'Q3 – WHY Explanation', answer: ans.b3, keywords:['carbon dioxide','extraction','bloom','releases','improves','explains why','purpose'], minWords:10 },
+    { q:'Q4 – Process vs Listing', answer: ans.b4, keywords:['order','chronological','fixed','mandatory','listing','categories','sequence','cannot change','time'], minWords:10 },
+  ];
+  topics.forEach(t => {
+    const words = t.answer.toLowerCase().split(/\s+/).filter(Boolean);
+    const kwHits = t.keywords.filter(k => t.answer.toLowerCase().includes(k)).length;
+    let score = 0, feedback = '';
+    if(words.length >= t.minWords && kwHits >= 2){ score=2; feedback='✅ Good answer — key concepts addressed.'; }
+    else if(words.length >= Math.floor(t.minWords*0.5) && kwHits >= 1){ score=1; feedback='⚠️ Partially correct — some key concepts missing.'; }
+    else { score=0; feedback='❌ Answer needs more detail or key concepts.'; }
+    results.push({...t, score, feedback, kwHits});
+  });
+  return results;
+}
+
+// Submit to Google Sheets
+const SHEET_URL = 'https://script.google.com/macros/s/AKfycbwpUrSLGzKaH9mRJqAo0w1K1QrmtBcrj8dPUN2KfO_CQilwqHFtgGNikskja-uDX-Bh/exec';
+
+async function submitToSheets(data){
+  try {
+    await fetch(SHEET_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        sheet: 'PreLessonTask',
+        name: data.studentName,
+        id: data.studentId,
+        timestamp: data.timestamp,
+        cheatViolations: data.cheatCount,
+        partA_start: data.partA.start.join(', '),
+        partA_mid: data.partA.mid.join(', '),
+        partA_end: data.partA.end.join(', '),
+        b1: data.partB.b1,
+        b2: data.partB.b2,
+        b3: data.partB.b3,
+        b4: data.partB.b4,
+      })
+    });
+  } catch(e){ console.warn('Sheet submission failed:', e); }
+}
+
+function showResults(data){
+  document.getElementById('app').classList.remove('show');
+  document.getElementById('results').classList.add('show');
+
+  const aScore = scorePartA(data.partA);
+  const bResults = scorePartB(data.partB);
+  const bTotal = bResults.reduce((a,r)=>a+r.score,0);
+  const bMax = bResults.length * 2;
+  const totalScore = aScore.score + Math.round(bTotal/bMax*50);
+
+  document.getElementById('results-meta').textContent = `${data.studentName} · ${data.studentId} · Submitted ${new Date().toLocaleTimeString()}`;
+
+  const pct = totalScore;
+  const circle = document.getElementById('score-circle');
+  circle.style.setProperty('--pct', pct+'%');
+  document.getElementById('score-pct').textContent = pct+'%';
+  document.getElementById('score-label').textContent = pct >= 80 ? '🌟 Excellent work!' : pct >= 60 ? '👍 Good effort!' : '📖 Keep practising!';
+
+  let html = '';
+
+  // Part A results
+  html += `<div class="result-item">
+    <div class="result-item-header">
+      <div class="result-badge ${aScore.correct/aScore.total>=0.7?'correct':'partial'}">${aScore.correct}/${aScore.total}</div>
+      <div class="result-label"><strong>Part A – Vocabulary Categorisation</strong></div>
+    </div>`;
+
+  ['start','mid','end'].forEach(cat => {
+    const label = cat==='start'?'Starting':cat==='mid'?'Continuing':'Ending';
+    const placed = data.partA[cat];
+    const correct = CORRECT_CATS[cat];
+    html += `<div style="margin-top:0.6rem; font-size:0.83rem; color:var(--muted);">${label}:</div>`;
+    if(placed.length === 0) html += `<div style="font-size:0.82rem; color:var(--error);">No items placed</div>`;
+    placed.forEach(s => {
+      const ok = correct.includes(s);
+      html += `<span style="display:inline-block; margin:2px 3px; padding:2px 8px; border-radius:12px; font-size:0.8rem; background:${ok?'rgba(52,211,153,0.15)':'rgba(248,113,113,0.15)'}; color:${ok?'var(--success)':'var(--error)'}; border:1px solid ${ok?'rgba(52,211,153,0.3)':'rgba(248,113,113,0.3)'};">${s} ${ok?'✓':'✗'}</span>`;
+    });
+  });
+
+  html += `<div class="result-correct-ans"><strong>Model answer:</strong><br>
+    Starting: first, before, at this point<br>
+    Continuing: then, next, after that, once, as soon as, while, subsequently, in the meantime, immediately after<br>
+    Ending: finally, last</div>
+  </div>`;
+
+  // Part B results
+  const bLabels = ['Q1 – Topic Sentence','Q2 – Sequence Signals','Q3 – WHY Explanation','Q4 – Process vs Listing'];
+  const modelAnswers = [
+    `"Brewing a well-balanced cup of pour-over coffee requires attention to sequence and timing." — It promises that the reader will learn the correct sequential steps to brew coffee.`,
+    `First (Starting), Next (Continuing), Once (Continuing), After the bloom (Continuing), As soon as (Continuing), Finally (Ending) — at least 5 with functions.`,
+    `"This step releases carbon dioxide and improves extraction." — This explanation shows WHY the bloom is important, not just what to do, which adds depth and credibility.`,
+    `A process paragraph presents steps in a fixed, mandatory chronological order (changing the order would break the result), whereas a listing-order paragraph presents categories or items that can be in any order.`
+  ];
+
+  bResults.forEach((r, i) => {
+    html += `<div class="result-item" style="animation-delay:${(i+1)*0.1}s">
+      <div class="result-item-header">
+        <div class="result-badge ${r.score===2?'correct':r.score===1?'partial':'incorrect'}">${r.score===2?'✓':r.score===1?'½':'✗'}</div>
+        <div class="result-label"><strong>${bLabels[i]}</strong> — ${r.score}/2 points</div>
+      </div>
+      <div class="progress-header"><span>Score</span><span>${r.score}/2</span></div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${r.score/2*100}%"></div></div>
+      <div class="result-student"><em>Your answer:</em> ${r.answer || '(no answer)'}</div>
+      <div style="font-size:0.82rem; margin-top:0.5rem;">${r.feedback}</div>
+      <div class="result-correct-ans"><strong>Model answer:</strong> ${modelAnswers[i]}</div>
+    </div>`;
+  });
+
+  if(data.cheatCount > 0){
+    html += `<div class="result-item" style="border-color:rgba(248,113,113,0.4);">
+      <div style="color:var(--error); font-size:0.85rem;">⚠️ <strong>${data.cheatCount} tab-switch violation(s)</strong> recorded during this session.</div>
+    </div>`;
+  }
+
+  document.getElementById('results-body').innerHTML = html;
+}
 </script>
 </body>
 </html>
